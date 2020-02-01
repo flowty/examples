@@ -1,0 +1,11 @@
+[flake8]
+ignore = D203,E741,W503
+exclude = 
+    .git,
+    .vscode,
+    __pycache__,
+    .venv,
+    .mypy_cache,
+    __init__.py,
+max-complexity = 10
+max-line-length = 88
