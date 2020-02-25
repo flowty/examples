@@ -12,14 +12,22 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 # build model, add aggregated graphs and resources.
 # Extracting to MIP may result in 3-index model or 2-index model depending on resources and number of aggregations
 m = Model()
-
 m.setParam(IntParam.Algorithm, 6)
+m.name = name
 
 # one graph, it is identical for all vehicles.
 # creates variables per edge and constraints for a single from source to sink
 g = m.addGraph(
-# for U > 1, the parameter specifies that there are identical subproblems
-    directed=True, obj=c, edges=es, source=0, sink=n - 1, L=1, U=n-2, type="B", namePrefix="x"
+    # for U > 1, the parameter specifies that there are identical subproblems
+    directed=True,
+    obj=c,
+    edges=es,
+    source=0,
+    sink=n - 1,
+    L=1,
+    U=n - 2,
+    type="B",
+    namePrefix="x",
 )
 
 # set partition constriants per customer

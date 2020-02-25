@@ -9,12 +9,16 @@
 
 
 import igraph
-import mip
-from flowty.decomposition import Mapping, NetworkModel
+from flowty import Model, xsum, IntParam
 from flowty.datasets import fetch_linerlib, fetch_linerlib_rotations, linerlib
 
-data = fetch_linerlib(instance="Baltic")
-network = fetch_linerlib_rotations(instance="Baltic_best_base")
+data = fetch_linerlib(instance="Mediterranean")
+network = fetch_linerlib_rotations(instance="Med_base_best")
+
+# data = fetch_linerlib(instance="Baltic")
+# network = fetch_linerlib_rotations(instance="Baltic_best_base")
+
+name, _, _, _, _ = data["instance"]
 
 builder = linerlib.GraphBuilder(data, network)
 
@@ -33,83 +37,76 @@ g.add_edges(builder.transitEdges())
 g.add_edges(builder.loadEdges())
 g.add_edges(builder.forfeitEdges())
 
+# model building
+m = Model()
+m.setParam(IntParam.Algorithm, 6)
+m.name = name
+
 # resource constrained graphs
+k = len(builder.demand["Destination"])
 gs = []
-for i in range(len(builder.demand["Destination"])):
+for i in range(k):
     origin = builder.demand["Origin"][i]
     dest = builder.demand["Destination"][i]
     vs = g.vs.select(
         name_in=builder.portCallNodes() + [f"O{i}_{origin}", f"D{i}_{dest}"]
     )
+    es = g.es.select(_within=[v.index for v in vs])
 
-    gk = g.subgraph(vs)
-    gk.es["cost"] = builder.cost
-    gk.es["time"] = builder.travelTime
-    gk.vs["time_lb"] = 0
-    gk.vs["time_ub"] = builder.demand["TransitTime"][i]
-    gk["main"] = ["time"]
-    gk["source"] = f"O{i}_{origin}"
-    gk["target"] = f"D{i}_{dest}"
-    gs.append(gk)
-
-
-# mip helper function to get variable name from edge
-def getVarName(k, i, j=None):
-    if j:
-        return f"e({i},{j},{k})"
-
-    return f"e({gs[k].vs[i.source]['name']},{gs[k].vs[i.target]['name']},{k})"
-
-
-# mip helper function to get variable index from subgraph edge
-def getIndex(i):
-    s = g.vs.find(name_eq=i.source_vertex["name"])
-    t = g.vs.find(name_eq=i.target_vertex["name"])
-    e = g.es.find(_source_eq=s.index, _target_eq=t.index)
-    return e.index
-
-
-# mip model
-m = mip.Model()
-xs = {
-    getVarName(k, e): m.add_var(var_type=mip.CONTINUOUS, name=getVarName(k, e))
-    for k, gk in enumerate(gs)
-    for e in gk.es
-}
-
-m.objective = mip.xsum(
-    builder.demand["FFEPerWeek"][k] * builder.cost[getIndex(e)] * xs[getVarName(k, e)]
-    for k, gk in enumerate(gs)
-    for e in gk.es
-)
-
-# demand per commodity
-for i in range(len(builder.demand["Destination"])):
-    origin = builder.demand["Origin"][i]
-    dest = builder.demand["Destination"][i]
-    v = gs[i].vs.find(name_eq=f"O{i}_{origin}")
-    es = gs[i].incident(v)
-
-    m += (mip.xsum(xs[getVarName(i, gs[i].es[eid])] for eid in es) == 1, f"d({i})")
-
-# edge capacity constraints
-for i, e in enumerate(voyageEdges):
-    m += (
-        mip.xsum(
-            builder.demand["FFEPerWeek"][k] * xs[getVarName(k, e[0], e[1])]
-            for k in range(len(gs))
-        )
-        >= builder.capacity[i],
-        f"c({i})",
+    source = g.vs.find(f"O{i}_{origin}").index
+    sink = g.vs.find(f"D{i}_{dest}").index
+    obj = [builder.demand["FFEPerWeek"][i] * builder.cost[e.index] for e in es]
+    edges = [(e.source, e.target) for e in es]
+    gk = m.addGraph(
+        directed=True,
+        obj=obj,
+        edges=edges,
+        source=source,
+        sink=sink,
+        L=1,
+        U=1,
+        type="C",
+        namePrefix=f"x_{i}",
     )
 
-# convexity bounds
-L = [1] * len(gs)
-U = [1] * len(gs)
+    time = [builder.travelTime[e.index] for e in es]
+    m.addResourceDisposible(
+        graph=gk,
+        consumptionType="E",
+        weight=time,
+        boundsType="V",
+        lb=0,
+        ub=builder.demand["TransitTime"][i],
+        obj=0,
+        namePrefix=f"time_{i}",
+    )
+    gs.append(gk)
 
-# mapping between mip and graph
-mapping = Mapping({xs[getVarName(k, e)]: [e] for k, gk in enumerate(gs) for e in gk.es})
+# graph vars
+vars = [gs[i].vars for i in range(k)]
 
+# sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
+for i in range(k):
+    m.addConstr(xsum(x * 1 for x in vars[i] if gs[i].source == x.source) == 1)
 
-net = NetworkModel(m, mapping, list(zip(gs, L, U)))
-status = net.solve()
+# sum_(k) x_ijk <= u_ij , forall i,j
+for j, edge in enumerate(voyageEdges):
+    e = (g.vs.find(name=edge[0]).index, g.vs.find(name=edge[1]).index)
+    m.addConstr(
+        xsum(
+            builder.demand["FFEPerWeek"][i] * x * 1
+            for i in range(k)
+            for x in vars[i]
+            if x.edge == e
+        )
+        <= builder.capacity[j]
+    )
+
+status = m.optimize()
+
+# get the variables
+xs = m.vars
+
+for x in xs:
+    if x.x > 0:
+        print(f"{x.name} id:{x.idx} = {x.x}")
