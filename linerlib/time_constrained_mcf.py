@@ -9,14 +9,14 @@
 
 
 import igraph
-from flowty import Model, xsum, IntParam
+from flowty import Model, xsum, IntParam, LinExpr
 from flowty.datasets import fetch_linerlib, fetch_linerlib_rotations, linerlib
 
-data = fetch_linerlib(instance="Mediterranean")
-network = fetch_linerlib_rotations(instance="Med_base_best")
+# data = fetch_linerlib(instance="Mediterranean")
+# network = fetch_linerlib_rotations(instance="Med_base_best")
 
-# data = fetch_linerlib(instance="Baltic")
-# network = fetch_linerlib_rotations(instance="Baltic_best_base")
+data = fetch_linerlib(instance="Baltic")
+network = fetch_linerlib_rotations(instance="Baltic_best_base")
 
 name, _, _, _, _ = data["instance"]
 
@@ -42,8 +42,19 @@ m = Model()
 m.setParam(IntParam.Algorithm, 6)
 m.name = name
 
-# resource constrained graphs
+# number of subproblems
 k = len(builder.demand["Destination"])
+
+# for keeping track of voyage edge variables
+voyageEdgeIds = [
+    g.es.find(
+        _source=g.vs.find(name=edge[0]).index, _target=g.vs.find(name=edge[1]).index
+    ).index
+    for edge in voyageEdges
+]
+voyageEdgeVarsIds = [{} for j in range(len(voyageEdgeIds))]
+
+# resource constrained graphs
 gs = []
 for i in range(k):
     origin = builder.demand["Origin"][i]
@@ -66,7 +77,7 @@ for i in range(k):
         L=1,
         U=1,
         type="C",
-        namePrefix=f"x_{i}",
+        names=f"x_{i}",
     )
 
     time = [builder.travelTime[e.index] for e in es]
@@ -78,29 +89,46 @@ for i in range(k):
         lb=0,
         ub=builder.demand["TransitTime"][i],
         obj=0,
-        namePrefix=f"time_{i}",
+        names=f"time_{i}",
     )
     gs.append(gk)
+
+    # keep track of voyageEdges for constraints later
+    tmp = list(voyageEdgeIds)
+    for j, e in enumerate(es):
+        for h, eid in enumerate(tmp):
+            if e.index == eid:
+                voyageEdgeVarsIds[eid][i] = j
+                tmp.remove(eid)
+                break
 
 # graph vars
 vars = [gs[i].vars for i in range(k)]
 
 # sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
 for i in range(k):
-    m.addConstr(xsum(x * 1 for x in vars[i] if gs[i].source == x.source) == 1)
+    source = gs[i].source
+    m.addConstr(xsum((1, x) for x in vars[i] if source == x.source) == 1)
+
+for j, ks in enumerate(voyageEdgeVarsIds):
+    expr = LinExpr()
+    for i, h in ks.items():
+        x = vars[i][h]
+        expr.addTerm(builder.demand["FFEPerWeek"][i], x)
+    m.addConstr(expr <= builder.capacity[j])
 
 # sum_(k) x_ijk <= u_ij , forall i,j
-for j, edge in enumerate(voyageEdges):
-    e = (g.vs.find(name=edge[0]).index, g.vs.find(name=edge[1]).index)
-    m.addConstr(
-        xsum(
-            builder.demand["FFEPerWeek"][i] * x * 1
-            for i in range(k)
-            for x in vars[i]
-            if x.edge == e
-        )
-        <= builder.capacity[j]
-    )
+# for j, edge in enumerate(voyageEdges):
+#     e = (g.vs.find(name=edge[0]).index, g.vs.find(name=edge[1]).index)
+#     m.addConstr(
+#         xsum(
+#             (builder.demand["FFEPerWeek"][i], x)
+#             for i in range(k)
+#             for x in vars[i]
+#             if x.edge == e
+#         )
+#         <= builder.capacity[j]
+#     )
 
 status = m.optimize()
 

@@ -3,7 +3,7 @@
 from flowty import Model, xsum, IntParam
 from flowty.datasets import fetch_vrp_rep
 
-bunch = fetch_vrp_rep("solomon-1987-r1", instance="R101_050")
+bunch = fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 #####################################
@@ -27,7 +27,6 @@ g = m.addGraph(
     L=1,
     U=n - 2,
     type="B",
-    namePrefix="x",
 )
 
 # set partition constriants per customer
@@ -38,28 +37,14 @@ for i in range(n)[1:-1]:
 # adds resources variables to the graph, again an aggregation therefore only |V|
 # inputs for weights, lb, and ub can be arrays or constants that is replicated per edge/vertex
 m.addResourceDisposible(
-    graph=g,
-    consumptionType="V",
-    weight=d,
-    boundsType="V",
-    lb=0,
-    ub=Q,
-    obj=0,
-    namePrefix="d",
+    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, obj=0, names="d"
 )
 m.addResourceDisposible(
-    graph=g,
-    consumptionType="E",
-    weight=t,
-    boundsType="V",
-    lb=a,
-    ub=b,
-    obj=0,
-    namePrefix="t",
+    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, obj=0, names="t"
 )
 
 # visit at node at most once on a path
-m.addResourceElementary(graph=g, type="V", namePrefix="e")
+m.addResourceElementary(graph=g, type="V", names="e")
 
 # m.write("dump.lp")
 

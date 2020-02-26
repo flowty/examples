@@ -43,27 +43,10 @@ m.setParam(IntParam.Algorithm, 4)
 # one graph, it is identical for all vehicles.
 # creates variables per edge and constraints for a single from source to sink
 # for U > 1, the parameter specifies that there are identical subproblems
-g = m.addGraph(
-    directed=True,
-    obj=ps,
-    edges=es,
-    source=0,
-    sink=6,
-    L=1,
-    U=1,
-    type="B",
-    namePrefix="x",
-)
+g = m.addGraph(directed=True, obj=ps, edges=es, source=0, sink=6, L=1, U=1, type="B")
 
 m.addResourceDisposible(
-    graph=g,
-    consumptionType="E",
-    weight=ws,
-    boundsType="V",
-    lb=0,
-    ub=c,
-    obj=0,
-    namePrefix="d",
+    graph=g, consumptionType="E", weight=ws, boundsType="V", lb=0, ub=c, obj=0
 )
 
 # m.write("dump.lp")
