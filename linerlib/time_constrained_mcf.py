@@ -9,7 +9,7 @@
 
 
 import igraph
-from flowty import Model, xsum, IntParam, LinExpr
+from flowty import Model, xsum, ParamKey, ParamValue, LinExpr, OptimizationStatus
 from flowty.datasets import fetch_linerlib, fetch_linerlib_rotations, linerlib
 
 # data = fetch_linerlib(instance="Mediterranean")
@@ -39,7 +39,7 @@ g.add_edges(builder.forfeitEdges())
 
 # model building
 m = Model()
-m.setParam(IntParam.Algorithm, 6)
+m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 m.name = name
 
 # number of subproblems
@@ -135,6 +135,35 @@ status = m.optimize()
 # get the variables
 xs = m.vars
 
-for x in xs:
-    if x.x > 0:
-        print(f"{x.name} id:{x.idx} = {x.x}")
+for var in xs:
+    if var.x > 0:
+        print(f"{var.name} id:{var.idx} = {var.x}")
+
+# display solution
+import math
+import networkx
+import matplotlib
+import matplotlib.pyplot as plt
+
+if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
+    edges = [
+        var.edge
+        for i in range(k)
+        for var in vars[i]
+        if not math.isclose(var.x, 0, abs_tol=0.001)
+    ]
+    gn = networkx.DiGraph()
+    gn.add_edges_from(edges)
+    pos = networkx.kamada_kawai_layout(gn)
+
+    networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
+
+    labels = {v.index: v["name"] for v in g.vs}
+    networkx.draw_networkx_labels(g, pos, labels=labels)
+
+    networkx.draw_networkx_edges(gn, pos, nodelist=gn.edges)
+
+    # labels = {i: names[i] for i in range(len(names))}
+    # networkx.draw_networkx_labels(g, pos, edge_labels=labels)
+
+    plt.show()

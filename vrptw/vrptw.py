@@ -1,6 +1,6 @@
 # vehicle routing with time windows
 
-from flowty import Model, xsum, IntParam
+from flowty import Model, xsum, ParamKey, ParamValue, OptimizationStatus
 from flowty.datasets import fetch_vrp_rep
 
 bunch = fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
@@ -12,7 +12,7 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 # build model, add aggregated graphs and resources.
 # Extracting to MIP may result in 3-index model or 2-index model depending on resources and number of aggregations
 m = Model()
-m.setParam(IntParam.Algorithm, 6)
+m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 m.name = name
 
 # one graph, it is identical for all vehicles.
@@ -53,6 +53,27 @@ status = m.optimize()
 # get the variables
 xs = m.vars
 
-for x in xs:
-    if x.x > 0:
-        print(f"{x.name} id:{x.idx} = {x.x}")
+for var in xs:
+    if var.x > 0:
+        print(f"{var.name} id:{var.idx} = {var.x}")
+
+# display solution
+import math
+import networkx
+import matplotlib
+import matplotlib.pyplot as plt
+
+if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
+    edges = [var.edge for var in g.vars if not math.isclose(var.x, 0, abs_tol=0.001)]
+    g = networkx.DiGraph()
+    g.add_nodes_from([i for i in range(n)])
+    g.add_edges_from(edges)
+    pos = {i: (x[i], y[i]) for i in range(n)}
+
+    networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
+    labels = {i: i for i in g.nodes}
+    networkx.draw_networkx_labels(g, pos, labels=labels)
+
+    networkx.draw_networkx_edges(g, pos, nodelist=g.edges)
+
+    plt.show()
