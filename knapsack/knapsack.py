@@ -71,7 +71,7 @@ m.setCallback(callback)
 # for U > 1, the parameter specifies that there are identical subproblems
 g = m.addGraph(directed=True, obj=ps, edges=es, source=0, sink=6, L=1, U=1, type="B")
 
-m.addResourceDisposible(
+m.addResourceDisposable(
     graph=g, consumptionType="E", weight=ws, boundsType="V", lb=0, ub=c, obj=0
 )
 
@@ -123,4 +123,4 @@ if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible
     labels = {e: e[0] if e[0] < len(w) and e[1] < len(w) else "" for e in g.edges}
     networkx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
 
-    plt.show()
+    # plt.show()
