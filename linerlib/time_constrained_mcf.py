@@ -10,13 +10,13 @@
 
 import igraph
 from flowty import Model, xsum, ParamKey, ParamValue, LinExpr, OptimizationStatus
-from flowty.datasets import fetch_linerlib, fetch_linerlib_rotations, linerlib
+from flowty.datasets import linerlib
 
-# data = fetch_linerlib(instance="Mediterranean")
-# network = fetch_linerlib_rotations(instance="Med_base_best")
+# data = linerlib.fetch_linerlib(instance="Mediterranean")
+# network = linerlib.fetch_linerlib_rotations(instance="Med_base_best")
 
-data = fetch_linerlib(instance="Baltic")
-network = fetch_linerlib_rotations(instance="Baltic_best_base")
+data = linerlib.fetch_linerlib(instance="Baltic")
+network = linerlib.fetch_linerlib_rotations(instance="Baltic_best_base")
 
 name, _, _, _, _ = data["instance"]
 
@@ -81,7 +81,7 @@ for i in range(k):
     )
 
     time = [builder.travelTime[e.index] for e in es]
-    m.addResourceDisposible(
+    m.addResourceDisposable(
         graph=gk,
         consumptionType="E",
         weight=time,
@@ -105,7 +105,7 @@ for i in range(k):
 # graph vars
 vars = [gs[i].vars for i in range(k)]
 
-# sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
+#sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
 for i in range(k):
     source = gs[i].source
     m.addConstr(xsum((1, x) for x in vars[i] if source == x.source) == 1)
@@ -116,6 +116,7 @@ for j, ks in enumerate(voyageEdgeVarsIds):
         x = vars[i][h]
         expr.addTerm(builder.demand["FFEPerWeek"][i], x)
     m.addConstr(expr <= builder.capacity[j])
+
 
 # sum_(k) x_ijk <= u_ij , forall i,j
 # for j, edge in enumerate(voyageEdges):
@@ -152,18 +153,23 @@ if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible
         for var in vars[i]
         if not math.isclose(var.x, 0, abs_tol=0.001)
     ]
+
+    nodes = [v.index for v in g.vs]
+
     gn = networkx.DiGraph()
-    gn.add_edges_from(edges)
+    gn.add_nodes_from(nodes)
+    gn.add_edges_from(edges)    
     pos = networkx.kamada_kawai_layout(gn)
 
-    networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
+    # networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
 
-    labels = {v.index: v["name"] for v in g.vs}
-    networkx.draw_networkx_labels(g, pos, labels=labels)
+    labels = {v.index: v["name"] for v in g.vs}   
+    networkx.draw_networkx_labels(gn, pos, labels=labels)
 
-    networkx.draw_networkx_edges(gn, pos, nodelist=gn.edges)
+    # networkx.draw_networkx_edges(gn, pos, edgelist=gn.edges)
 
     # labels = {i: names[i] for i in range(len(names))}
     # networkx.draw_networkx_labels(g, pos, edge_labels=labels)
 
+    networkx.draw(gn, pos)
     plt.show()
