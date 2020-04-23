@@ -106,21 +106,21 @@ import math
 #     layout = [(x[i], y[i]) for i in range(g.vcount())]  # node coordinates
 #     display(SVG(igraph.plot(g, layout=layout)._repr_svg_()))
 
-import networkx
-import matplotlib
-import matplotlib.pyplot as plt
+# import networkx
+# import matplotlib
+# import matplotlib.pyplot as plt
 
-if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-    edges = [x.edge for x in g.vars if not math.isclose(x.x, 0, abs_tol=0.001)]
-    g = networkx.DiGraph()
-    g.add_edges_from(edges)
-    pos = networkx.spring_layout(g)
-    networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
-    labels = {i: i for i in g.nodes}
-    networkx.draw_networkx_labels(g, pos, labels=labels)
+# if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
+#     edges = [x.edge for x in g.vars if not math.isclose(x.x, 0, abs_tol=0.001)]
+#     g = networkx.DiGraph()
+#     g.add_edges_from(edges)
+#     pos = networkx.spring_layout(g)
+#     networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
+#     labels = {i: i for i in g.nodes}
+#     networkx.draw_networkx_labels(g, pos, labels=labels)
 
-    networkx.draw_networkx_edges(g, pos, nodelist=g.edges)
-    labels = {e: e[0] if e[0] < len(w) and e[1] < len(w) else "" for e in g.edges}
-    networkx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
+#     networkx.draw_networkx_edges(g, pos, nodelist=g.edges)
+#     labels = {e: e[0] if e[0] < len(w) and e[1] < len(w) else "" for e in g.edges}
+#     networkx.draw_networkx_edge_labels(g, pos, edge_labels=labels)
 
-    # plt.show()
+#     # plt.show()
