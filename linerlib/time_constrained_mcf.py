@@ -131,6 +131,8 @@ for j, ks in enumerate(voyageEdgeVarsIds):
 #         <= builder.capacity[j]
 #     )
 
+# m.write("dump")
+
 status = m.optimize()
 
 # get the variables
@@ -140,36 +142,39 @@ for var in xs:
     if var.x > 0:
         print(f"{var.name} id:{var.idx} = {var.x}")
 
+
+print("objval:", m.objective)
+
 # display solution
-import math
-import networkx
-import matplotlib
-import matplotlib.pyplot as plt
+# import math
+# import networkx
+# import matplotlib
+# import matplotlib.pyplot as plt
 
-if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-    edges = [
-        var.edge
-        for i in range(k)
-        for var in vars[i]
-        if not math.isclose(var.x, 0, abs_tol=0.001)
-    ]
+# if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
+#     edges = [
+#         var.edge
+#         for i in range(k)
+#         for var in vars[i]
+#         if not math.isclose(var.x, 0, abs_tol=0.001)
+#     ]
 
-    nodes = [v.index for v in g.vs]
+#     nodes = [v.index for v in g.vs]
 
-    gn = networkx.DiGraph()
-    gn.add_nodes_from(nodes)
-    gn.add_edges_from(edges)    
-    pos = networkx.kamada_kawai_layout(gn)
+#     gn = networkx.DiGraph()
+#     gn.add_nodes_from(nodes)
+#     gn.add_edges_from(edges)    
+#     pos = networkx.kamada_kawai_layout(gn)
 
-    # networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
+#     # networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
 
-    labels = {v.index: v["name"] for v in g.vs}   
-    networkx.draw_networkx_labels(gn, pos, labels=labels)
+#     labels = {v.index: v["name"] for v in g.vs}   
+#     networkx.draw_networkx_labels(gn, pos, labels=labels)
 
-    # networkx.draw_networkx_edges(gn, pos, edgelist=gn.edges)
+#     # networkx.draw_networkx_edges(gn, pos, edgelist=gn.edges)
 
-    # labels = {i: names[i] for i in range(len(names))}
-    # networkx.draw_networkx_labels(g, pos, edge_labels=labels)
+#     # labels = {i: names[i] for i in range(len(names))}
+#     # networkx.draw_networkx_labels(g, pos, edge_labels=labels)
 
-    networkx.draw(gn, pos)
-    plt.show()
+#     networkx.draw(gn, pos)
+#     # plt.show()
