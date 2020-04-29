@@ -36,7 +36,7 @@ class Commodity:
         return self.__repr__()
 
 
-f = open("canadFC\\ttinstances\\tt_r06.1_12.csv")
+f = open("tt_r06.1_12.csv")
 
 N, A, K = [int(x) for x in f.readline().split(" ")]
 print(N,A,K)
