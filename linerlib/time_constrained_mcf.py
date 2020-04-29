@@ -105,7 +105,7 @@ for i in range(k):
 # graph vars
 vars = [gs[i].vars for i in range(k)]
 
-#sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
+# sum_( i,j \in delta+(o^k)) x_ijk = 1 , forall k
 for i in range(k):
     source = gs[i].source
     m.addConstr(xsum((1, x) for x in vars[i] if source == x.source) == 1)
@@ -163,12 +163,12 @@ print("objval:", m.objective)
 
 #     gn = networkx.DiGraph()
 #     gn.add_nodes_from(nodes)
-#     gn.add_edges_from(edges)    
+#     gn.add_edges_from(edges)
 #     pos = networkx.kamada_kawai_layout(gn)
 
 #     # networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
 
-#     labels = {v.index: v["name"] for v in g.vs}   
+#     labels = {v.index: v["name"] for v in g.vs}
 #     networkx.draw_networkx_labels(gn, pos, labels=labels)
 
 #     # networkx.draw_networkx_edges(gn, pos, edgelist=gn.edges)

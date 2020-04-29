@@ -1,6 +1,7 @@
 # vehicle routing with time windows
 
 import logging
+
 logging.basicConfig(format=logging.BASIC_FORMAT)
 
 
@@ -15,9 +16,7 @@ from flowty import (
 
 from flowty.datasets import vrp_rep
 
-bunch = vrp_rep.fetch_vrp_rep(
-    "solomon-1987-r1", instance="R101_025"
-)
+bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 #####################################
@@ -26,9 +25,7 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 # build model, add aggregated graphs and resources.
 # Extracting to MIP may result in 3-index model or 2-index model depending on resources and number of aggregations
 m = Model()
-m.setParam(
-    ParamKey.Algorithm, ParamValue.AlgorithmPathMip
-)
+m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 m.name = name
 
 # one graph, it is identical for all vehicles.
@@ -96,15 +93,8 @@ import networkx
 import matplotlib
 import matplotlib.pyplot as plt
 
-if (
-    status == OptimizationStatus.Optimal
-    or status == OptimizationStatus.Feasible
-):
-    edges = [
-        var.edge
-        for var in g.vars
-        if not math.isclose(var.x, 0, abs_tol=0.001)
-    ]
+if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
+    edges = [var.edge for var in g.vars if not math.isclose(var.x, 0, abs_tol=0.001)]
     g = networkx.DiGraph()
     g.add_nodes_from([i for i in range(n)])
     g.add_edges_from(edges)

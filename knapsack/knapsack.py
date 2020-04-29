@@ -12,7 +12,7 @@ p = [10, 13, 18, 31, 7, 15]
 w = [11, 15, 20, 35, 10, 33]
 c = 47
 
-# creating a 
+# creating a
 es = [
     (0, 1),
     (1, 2),
@@ -66,8 +66,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-    plt.figure(figsize=(20,10))
-    
+    plt.figure(figsize=(20, 10))
+
     edges = [x.edge for x in g.vars if not math.isclose(x.x, 0, abs_tol=0.001)]
     g = networkx.DiGraph()
     g.add_edges_from(edges)
@@ -76,11 +76,10 @@ if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible
     labels = {i: i for i in g.nodes}
     networkx.draw_networkx_labels(g, pos, labels=labels)
 
-
     one_edges = [e for e in g.edges if e[0] < len(w) and e[1] < len(w)]
-    networkx.draw_networkx_edges(g, pos, edgelist=one_edges, edge_color='b')
-    
+    networkx.draw_networkx_edges(g, pos, edgelist=one_edges, edge_color="b")
+
     zero_edges = [e for e in g.edges if e not in one_edges]
-    networkx.draw_networkx_edges(g, pos, edgelist=zero_edges, edge_color='r')
-    
+    networkx.draw_networkx_edges(g, pos, edgelist=zero_edges, edge_color="r")
+
     plt.show()
