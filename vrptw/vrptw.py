@@ -16,7 +16,7 @@ from flowty import (
 from flowty.datasets import vrp_rep
 
 bunch = vrp_rep.fetch_vrp_rep(
-    "solomon-1987-r1", instance="R102_025"
+    "solomon-1987-r1", instance="R101_025"
 )
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
@@ -90,30 +90,30 @@ for var in xs:
 
 print("objval:", m.objective)
 
-# # display solution
-# import math
-# import networkx
-# import matplotlib
-# import matplotlib.pyplot as plt
+# display solution
+import math
+import networkx
+import matplotlib
+import matplotlib.pyplot as plt
 
-# if (
-#     status == OptimizationStatus.Optimal
-#     or status == OptimizationStatus.Feasible
-# ):
-#     edges = [
-#         var.edge
-#         for var in g.vars
-#         if not math.isclose(var.x, 0, abs_tol=0.001)
-#     ]
-#     g = networkx.DiGraph()
-#     g.add_nodes_from([i for i in range(n)])
-#     g.add_edges_from(edges)
-#     pos = {i: (x[i], y[i]) for i in range(n)}
+if (
+    status == OptimizationStatus.Optimal
+    or status == OptimizationStatus.Feasible
+):
+    edges = [
+        var.edge
+        for var in g.vars
+        if not math.isclose(var.x, 0, abs_tol=0.001)
+    ]
+    g = networkx.DiGraph()
+    g.add_nodes_from([i for i in range(n)])
+    g.add_edges_from(edges)
+    pos = {i: (x[i], y[i]) for i in range(n)}
 
-#     networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
-#     labels = {i: i for i in g.nodes}
-#     networkx.draw_networkx_labels(g, pos, labels=labels)
+    networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
+    labels = {i: i for i in g.nodes}
+    networkx.draw_networkx_labels(g, pos, labels=labels)
 
-#     networkx.draw_networkx_edges(g, pos, nodelist=g.edges)
+    networkx.draw_networkx_edges(g, pos, edgeslist=g.edges)
 
-#     # plt.show()
+    plt.show()
