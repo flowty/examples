@@ -23,15 +23,18 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
 # use the PathMip algorithm
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
+m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
-g = m.addGraph(directed=True, obj=c, edges=es, source=0, sink=n - 1, L=1, U=1, type="B")
+g = m.addGraph(
+    directed=True, obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B"
+)
 
 # resource constriants
 m.addResourceDisposable(
     graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, obj=0, names="d"
 )
+
 # m.addResourceDisposable(
 #     graph=g,
 #     consumptionType="E",
@@ -76,10 +79,8 @@ m.addResourceCustom(graph=g, name="time")
 m.addResourceElementary(graph=g, type="V", names="e")
 
 # set partitioning constraints
-# for i in range(n)[1:-1]:
-#     m.addConstr(
-#         xsum(x * 1 for x in g.vars if i == x.source) == 1
-#     )
+for i in range(n)[1:-1]:
+    m.addConstr(xsum(1 * x for x in g.vars if i == x.source) == 1)
 
 status = m.optimize()
 
