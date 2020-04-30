@@ -247,15 +247,19 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
 
 def callback(cb: CallbackModel, where: Where):
     if where == Where.PathMipCuts:
-        relax = cb.relaxation
+        epsilon = 1e-4
+        relax = cb.x
 
-        for y_var in y:
-            e = y_var.edge
-            xEdges = [x for k in range(K) for x in g[k].vars if x.edge == e]
-            xksum = sum([relax[x.id] for x in xEdges])
+        for e, y_var in enumerate(y):
+            edge = edges[e]
 
-            if xksum > relax[y_var.id]:
-                cb.addCut(xsum(x for x in xEdges) <= y_var)
+            for k in range(K):
+                for x in g[k].vars:
+                    if x.edge != edge:
+                        continue
+
+                    if relax[x.idx] > D[k] * relax[y_var.idx] + epsilon:
+                        cb.addCut(x <= D[k] * y_var)
 
 
 m.setCallback(callback)
