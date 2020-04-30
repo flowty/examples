@@ -1,10 +1,5 @@
 # vehicle routing with time windows
 
-import logging
-
-logging.basicConfig(format=logging.BASIC_FORMAT)
-
-
 from flowty import (
     Model,
     xsum,
@@ -94,29 +89,29 @@ xs = m.vars
 #         print(f"{var.name} id:{var.idx} = {var.x}")
 
 # display solution
-# import math
-# import networkx
-# import matplotlib
-# import matplotlib.pyplot as plt
+import math
+import networkx
+import matplotlib
+import matplotlib.pyplot as plt
 
-# if (
-#     status == OptimizationStatus.Optimal
-#     or status == OptimizationStatus.Feasible
-# ):
-#     edges = [
-#         var.edge
-#         for var in g.vars
-#         if not math.isclose(var.x, 0, abs_tol=0.001)
-#     ]
-#     g = networkx.DiGraph()
-#     g.add_nodes_from([i for i in range(n)])
-#     g.add_edges_from(edges)
-#     pos = {i: (x[i], y[i]) for i in range(n)}
+if (
+    status == OptimizationStatus.Optimal
+    or status == OptimizationStatus.Feasible
+):
+    edges = [
+        var.edge
+        for var in g.vars
+        if not math.isclose(var.x, 0, abs_tol=0.001)
+    ]
+    g = networkx.DiGraph()
+    g.add_nodes_from([i for i in range(n)])
+    g.add_edges_from(edges)
+    pos = {i: (x[i], y[i]) for i in range(n)}
 
-#     networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
-#     labels = {i: i for i in g.nodes}
-#     networkx.draw_networkx_labels(g, pos, labels=labels)
+    networkx.draw_networkx_nodes(g, pos, nodelist=g.nodes)
+    labels = {i: i for i in g.nodes}
+    networkx.draw_networkx_labels(g, pos, labels=labels)
 
-#     networkx.draw_networkx_edges(g, pos, edgeslist=g.edges)
+    networkx.draw_networkx_edges(g, pos, edgeslist=g.edges)
 
-#     plt.show()
+    plt.show()

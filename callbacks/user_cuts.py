@@ -266,6 +266,8 @@ m.setCallback(callback)
 
 status = m.optimize()
 
+print(f"ObjValue {m.objective}")
+
 # get the variables
 xs = m.vars
 
