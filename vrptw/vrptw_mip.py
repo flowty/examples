@@ -1,9 +1,9 @@
 # vehicle routing with time windows
 
-from flowty import Model, Var, Constr, LinExpr, LinEqua, xsum
-from flowty.datasets import fetch_vrp_rep
+from flowty import Model, xsum
+from flowty.datasets import vrp_rep
 
-bunch = fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
+bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 #####################################
@@ -84,8 +84,8 @@ for k in range(n)[1:-1]:
             )
         ]
 
-    # elementarity, redundant due to set partition constraints but needed for auto detections
-    # may be removed by presolver if solved directly
+    # elementarity, redundant due to set partition constraints but needed for auto
+    # detections may be removed by presolver if solved directly
     for i in range(n):
         # sum_(j) x_ij <= 1 , forall i
         constrBlock += [
@@ -102,4 +102,13 @@ for i in range(n)[1:-1]:
 m.write("dump.lp")
 
 # solve it
-m.optimize()
+status = m.optimize()
+
+print(f"ObjectiveValue {m.objectiveValue}")
+
+# get the variables
+xs = m.vars
+
+for var in xs:
+    if var.x > 0:
+        print(f"{var.name} id:{var.idx} = {var.x}")

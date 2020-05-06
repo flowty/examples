@@ -3,8 +3,6 @@ from flowty import (
     xsum,
     ParamKey,
     ParamValue,
-    LinExpr,
-    OptimizationStatus,
     CallbackModel,
     Where,
 )
@@ -266,7 +264,7 @@ m.setCallback(callback)
 
 status = m.optimize()
 
-print(f"ObjValue {m.objective}")
+print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
 xs = m.vars
@@ -274,26 +272,3 @@ xs = m.vars
 for var in xs:
     if var.x > 0:
         print(f"{var.idx} = {var.x}")
-
-# display solution
-import math
-import networkx
-import matplotlib
-import matplotlib.pyplot as plt
-
-if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-    edges = [
-        var.edge
-        for k in range(K)
-        for var in g[k].vars
-        if not math.isclose(var.x, 0, abs_tol=0.001)
-    ]
-
-    gn = networkx.DiGraph()
-    gn.add_edges_from(edges)
-    pos = networkx.kamada_kawai_layout(gn)
-
-    networkx.draw_networkx_labels(gn, pos)
-
-    networkx.draw(gn, pos)
-    plt.show()

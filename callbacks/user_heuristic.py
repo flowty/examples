@@ -28,48 +28,41 @@ m.addResourceDisposable(
     graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, obj=0, names="d"
 )
 
-# m.addResourceDisposable(
-#     graph=g,
-#     consumptionType="E",
-#     weight=t,
-#     boundsType="V",
-#     lb=a,
-#     ub=b,
-#     obj=0,
-#     names="t",
-# )
+m.addResourceDisposable(
+    graph=g,
+    consumptionType="E",
+    weight=t,
+    boundsType="V",
+    lb=a,
+    ub=b,
+    obj=0,
+    names="t",
+)
 
 m.addResourceElementary(graph=g, type="V", names="e")
 
 
 def callback(cb: CallbackModel, where: Where):
-    # initialization
-    if where == Where.DpInit:
-        cb.setResource("time", 0)
+    # Heuristic
+    if where == Where.PathMipHeuristic:
+        # k = cb.k  # current subproblem
+        x = cb.x  # lp relaxation
 
-    # extension
-    if where == Where.DpExtend:
-        e = cb.edge
-        j = es[e][1]
-        value = cb.getResource("time")
-        value = max(a[j], value + t[e])
+        # add all 1-customer routes
+        cost = 0
+        xEdges = [0] * len(x)
+        for i in range(n)[1:-1]:
+            index = es.index((0, i))
+            xEdges[index] = 1
+            cost += c[index]
+            index = es.index((i, n - 1))
+            xEdges[index] = 1
+            cost += c[index]
 
-        if value > b[j]:
-            cb.reject()
-        else:
-            cb.setResource("time", value)
-
-    # dominance
-    if where == Where.DpDominate:
-        value = cb.getResource("time")
-        other = cb.getResourceOther("time")
-
-        if other < value:
-            cb.reject()
+        cb.addSolution(cost, xEdges)
 
 
 m.setCallback(callback)
-m.addResourceCustom(graph=g, name="time")
 
 # set partitioning constraints
 for i in range(n)[1:-1]:

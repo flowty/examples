@@ -3,13 +3,15 @@
 # Implements
 #
 # Christian Vad Karsten, David Pisinger, Stefan Ropke, and Berit Dangaard Brouer
-# "The time constrained multi-commodity network flow problem and its application to liner shipping network design"
-# Transportation Research Part E: Logistics and Transportation Review Volume 76, April 2015, Pages 122-138
+# "The time constrained multi-commodity network flow problem and its application to
+# liner shipping network design"
+# Transportation Research Part E: Logistics and Transportation Review
+# Volume 76, April 2015, Pages 122-138
 # https://doi.org/10.1016/j.tre.2015.01.005
 
 
 import igraph
-from flowty import Model, xsum, ParamKey, ParamValue, LinExpr, OptimizationStatus
+from flowty import Model, xsum, ParamKey, ParamValue, LinExpr
 from flowty.datasets import linerlib
 
 # data = linerlib.fetch_linerlib(instance="Mediterranean")
@@ -118,22 +120,9 @@ for j, ks in enumerate(voyageEdgeVarsIds):
     m.addConstr(expr <= builder.capacity[j])
 
 
-# sum_(k) x_ijk <= u_ij , forall i,j
-# for j, edge in enumerate(voyageEdges):
-#     e = (g.vs.find(name=edge[0]).index, g.vs.find(name=edge[1]).index)
-#     m.addConstr(
-#         xsum(
-#             (builder.demand["FFEPerWeek"][i], x)
-#             for i in range(k)
-#             for x in vars[i]
-#             if x.edge == e
-#         )
-#         <= builder.capacity[j]
-#     )
-
-# m.write("dump")
-
 status = m.optimize()
+
+print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
 xs = m.vars
@@ -141,40 +130,3 @@ xs = m.vars
 for var in xs:
     if var.x > 0:
         print(f"{var.name} id:{var.idx} = {var.x}")
-
-
-print("objval:", m.objective)
-
-# display solution
-# import math
-# import networkx
-# import matplotlib
-# import matplotlib.pyplot as plt
-
-# if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-#     edges = [
-#         var.edge
-#         for i in range(k)
-#         for var in vars[i]
-#         if not math.isclose(var.x, 0, abs_tol=0.001)
-#     ]
-
-#     nodes = [v.index for v in g.vs]
-
-#     gn = networkx.DiGraph()
-#     gn.add_nodes_from(nodes)
-#     gn.add_edges_from(edges)
-#     pos = networkx.kamada_kawai_layout(gn)
-
-#     # networkx.draw_networkx_nodes(gn, pos, nodelist=gn.nodes)
-
-#     labels = {v.index: v["name"] for v in g.vs}
-#     networkx.draw_networkx_labels(gn, pos, labels=labels)
-
-#     # networkx.draw_networkx_edges(gn, pos, edgelist=gn.edges)
-
-#     # labels = {i: names[i] for i in range(len(names))}
-#     # networkx.draw_networkx_labels(g, pos, edge_labels=labels)
-
-#     networkx.draw(gn, pos)
-#     # plt.show()

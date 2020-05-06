@@ -1,4 +1,4 @@
-from flowty import Model, xsum, ParamKey, ParamValue, LinExpr, OptimizationStatus
+from flowty import Model, xsum, ParamKey, ParamValue
 
 K = 10
 
@@ -237,32 +237,11 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
 
 status = m.optimize()
 
+print(f"ObjectiveValue {m.objectiveValue}")
+
 # get the variables
 xs = m.vars
 
 for var in xs:
     if var.x > 0:
         print(f"{var.idx} = {var.x}")
-
-# display solution
-import math
-import networkx
-import matplotlib
-import matplotlib.pyplot as plt
-
-if status == OptimizationStatus.Optimal or status == OptimizationStatus.Feasible:
-    edges = [
-        var.edge
-        for k in range(K)
-        for var in g[k].vars
-        if not math.isclose(var.x, 0, abs_tol=0.001)
-    ]
-
-    gn = networkx.DiGraph()
-    gn.add_edges_from(edges)
-    pos = networkx.kamada_kawai_layout(gn)
-
-    networkx.draw_networkx_labels(gn, pos)
-
-    networkx.draw(gn, pos)
-    plt.show()
