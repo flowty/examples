@@ -27,7 +27,7 @@ g = m.addGraph(
 
 def callback(cb: CallbackModel, where: Where):
     # Pricing
-    if where == Where.PathMipSubProblem:
+    if where == Where.PathMipSubproblem:
         # k = cb.k  # subproblem
         redCost = cb.reducedCost
         zeroEdges = cb.zeroEdges

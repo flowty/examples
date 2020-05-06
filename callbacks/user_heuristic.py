@@ -45,7 +45,6 @@ m.addResourceElementary(graph=g, type="V", names="e")
 def callback(cb: CallbackModel, where: Where):
     # Heuristic
     if where == Where.PathMipHeuristic:
-        # k = cb.k  # current subproblem
         x = cb.x  # lp relaxation
 
         # add all 1-customer routes
