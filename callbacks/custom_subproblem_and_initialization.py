@@ -38,7 +38,7 @@ def callback(cb: CallbackModel, where: Where):
         zeroB = list(b)
         for e in zeroEdges:
             zeroA[e] = 0
-            zeroB[e] = 0            
+            zeroB[e] = 0
 
         p = Model()
         p.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
