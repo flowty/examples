@@ -1,8 +1,6 @@
 name: Python lint
 
-on:
-  push:
-    tags: test/**
+on: [pull_request]
 
 jobs:
   python_test:
