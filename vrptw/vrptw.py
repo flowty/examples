@@ -30,6 +30,9 @@ g = m.addGraph(
 for i in range(n)[1:-1]:
     m += xsum(x * 1 for x in g.vars if i == x.source) == 1
 
+    packingSet = [x for x in g.vars if i == x.source]
+    m.addPackingSet(packingSet)
+
 # adds resources variables to the graph
 m.addResourceDisposable(
     graph=g,
@@ -59,9 +62,19 @@ status = m.optimize()
 
 print(f"ObjectiveValue {m.objectiveValue}")
 
-# get the variables
-xs = m.vars
+m.write("dump")
 
-for var in xs:
-    if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+m2 = Model()
+m2.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
+m2.read("dump")
+
+status = m2.optimize()
+
+print(f"ObjectiveValue {m2.objectiveValue}")
+
+# get the variables
+# xs = m.vars
+
+# for var in xs:
+#     if var.x > 0:
+#         print(f"{var.name} id:{var.idx} = {var.x}")
