@@ -1,0 +1,30 @@
+name: Python lint
+
+on:
+  push:
+    tags: test/**
+
+jobs:
+  python_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install black flake8
+    - name: Flake8
+      run: |
+        flake8 **/*py
+    - name: Black
+      run: |
+        black **/*py
