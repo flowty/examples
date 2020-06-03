@@ -40,7 +40,7 @@ m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
 g = m.addGraph(directed=True, obj=ps, edges=es, source=0, sink=6, L=1, U=1, type="B")
 
 m.addResourceDisposable(
-    graph=g, consumptionType="E", weight=ws, boundsType="V", lb=0, ub=c, obj=0
+    graph=g, consumptionType="E", weight=ws, boundsType="V", lb=0, ub=c
 )
 
 status = m.optimize()

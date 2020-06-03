@@ -41,7 +41,6 @@ m.addResourceDisposable(
     boundsType="V",
     lb=0,
     ub=Q,
-    obj=0,
     names="d",
 )
 m.addResourceDisposable(
@@ -51,7 +50,6 @@ m.addResourceDisposable(
     boundsType="V",
     lb=a,
     ub=b,
-    obj=0,
     names="t",
 )
 

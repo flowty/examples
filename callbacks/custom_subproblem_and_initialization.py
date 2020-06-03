@@ -61,7 +61,6 @@ def callback(cb: CallbackModel, where: Where):
             boundsType="V",
             lb=0,
             ub=Q,
-            obj=0,
             names="d",
         )
 
@@ -72,7 +71,6 @@ def callback(cb: CallbackModel, where: Where):
             boundsType="V",
             lb=zeroA,
             ub=zeroB,
-            obj=0,
             names="t",
         )
         p.addResourceElementary(graph=pg, type="V", names="e")
