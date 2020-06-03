@@ -9,8 +9,7 @@
 # Volume 76, April 2015, Pages 122-138
 # https://doi.org/10.1016/j.tre.2015.01.005
 
-
-import igraph
+import networkx
 from flowty import Model, xsum, ParamKey, ParamValue, LinExpr
 from flowty.datasets import linerlib
 
@@ -25,19 +24,54 @@ name, _, _, _, _ = data["instance"]
 builder = linerlib.GraphBuilder(data, network)
 
 # build the graph
-g = igraph.Graph(directed=True)
+g = networkx.DiGraph()
 
 # port call, origin, destination nodes
-g.add_vertices(builder.portCallNodes())
-g.add_vertices(builder.originNodes())
-g.add_vertices(builder.destinationNodes())
+g.add_nodes_from(
+    [
+        (n, {"index": g.number_of_nodes() + i})
+        for i, n in enumerate(builder.portCallNodes())
+    ]
+)
+g.add_nodes_from(
+    [
+        (n, {"index": g.number_of_nodes() + i})
+        for i, n in enumerate(builder.originNodes())
+    ]
+)
+g.add_nodes_from(
+    [
+        (n, {"index": g.number_of_nodes() + i})
+        for i, n in enumerate(builder.destinationNodes())
+    ]
+)
 
 # voyage, transit, load, forfeit edges
 voyageEdges = builder.voyageEdges()
-g.add_edges(voyageEdges)
-g.add_edges(builder.transitEdges())
-g.add_edges(builder.loadEdges())
-g.add_edges(builder.forfeitEdges())
+g.add_edges_from(
+    [
+        (n[0], n[1], {"index": g.number_of_edges() + i})
+        for i, n in enumerate(voyageEdges)
+    ]
+)
+g.add_edges_from(
+    [
+        (n[0], n[1], {"index": g.number_of_edges() + i})
+        for i, n in enumerate(builder.transitEdges())
+    ]
+)
+g.add_edges_from(
+    [
+        (n[0], n[1], {"index": g.number_of_edges() + i})
+        for i, n in enumerate(builder.loadEdges())
+    ]
+)
+g.add_edges_from(
+    [
+        (n[0], n[1], {"index": g.number_of_edges() + i})
+        for i, n in enumerate(builder.forfeitEdges())
+    ]
+)
 
 # model building
 m = Model()
@@ -48,12 +82,7 @@ m.name = name
 k = len(builder.demand["Destination"])
 
 # for keeping track of voyage edge variables
-voyageEdgeIds = [
-    g.es.find(
-        _source=g.vs.find(name=edge[0]).index, _target=g.vs.find(name=edge[1]).index
-    ).index
-    for edge in voyageEdges
-]
+voyageEdgeIds = [g.edges[edge[0], edge[1]] for edge in voyageEdges]
 voyageEdgeVarsIds = [{} for j in range(len(voyageEdgeIds))]
 
 # resource constrained graphs
@@ -61,15 +90,15 @@ gs = []
 for i in range(k):
     origin = builder.demand["Origin"][i]
     dest = builder.demand["Destination"][i]
-    vs = g.vs.select(
-        name_in=builder.portCallNodes() + [f"O{i}_{origin}", f"D{i}_{dest}"]
-    )
-    es = g.es.select(_within=[v.index for v in vs])
+    vs = builder.portCallNodes() + [f"O{i}_{origin}", f"D{i}_{dest}"]
+    es = g.edges(nbunch=vs)
 
-    source = g.vs.find(f"O{i}_{origin}").index
-    sink = g.vs.find(f"D{i}_{dest}").index
-    obj = [builder.demand["FFEPerWeek"][i] * builder.cost[e.index] for e in es]
-    edges = [(e.source, e.target) for e in es]
+    source = g.nodes[f"O{i}_{origin}"]["index"]
+    sink = g.nodes[f"D{i}_{dest}"]["index"]
+    obj = [
+        builder.demand["FFEPerWeek"][i] * builder.cost[g.edges[e]["index"]] for e in es
+    ]
+    edges = [(g.nodes[e[0]]["index"], g.nodes[e[1]]["index"]) for e in es]
     gk = m.addGraph(
         directed=True,
         obj=obj,
@@ -82,7 +111,7 @@ for i in range(k):
         names=f"x_{i}",
     )
 
-    time = [builder.travelTime[e.index] for e in es]
+    time = [builder.travelTime[g.edges[e]["index"]] for e in es]
     m.addResourceDisposable(
         graph=gk,
         consumptionType="E",
@@ -90,16 +119,15 @@ for i in range(k):
         boundsType="V",
         lb=0,
         ub=builder.demand["TransitTime"][i],
-        obj=0,
         names=f"time_{i}",
     )
     gs.append(gk)
 
     # keep track of voyageEdges for constraints later
-    tmp = list(voyageEdgeIds)
+    tmp = list([eid["index"] for eid in voyageEdgeIds])
     for j, e in enumerate(es):
         for h, eid in enumerate(tmp):
-            if e.index == eid:
+            if g.edges[e]["index"] == eid:
                 voyageEdgeVarsIds[eid][i] = j
                 tmp.remove(eid)
                 break
@@ -118,7 +146,6 @@ for j, ks in enumerate(voyageEdgeVarsIds):
         x = vars[i][h]
         expr.addTerm(builder.demand["FFEPerWeek"][i], x)
     m.addConstr(expr <= builder.capacity[j])
-
 
 status = m.optimize()
 
