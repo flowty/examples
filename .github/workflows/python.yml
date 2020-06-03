@@ -22,7 +22,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        pip install cffi python-igraph
+        pip install cffi networkx
         pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
     - name: Test Knapsack
       run: |
