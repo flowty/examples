@@ -100,7 +100,6 @@ for i in range(k):
     ]
     edges = [(g.nodes[e[0]]["index"], g.nodes[e[1]]["index"]) for e in es]
     gk = m.addGraph(
-        directed=True,
         obj=obj,
         edges=edges,
         source=source,

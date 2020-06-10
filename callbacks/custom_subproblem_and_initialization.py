@@ -21,7 +21,7 @@ m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
 g = m.addGraph(
-    directed=True, obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B"
+    obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B"
 )
 
 
