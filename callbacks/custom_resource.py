@@ -63,6 +63,7 @@ def callback(cb: CallbackModel, where: Where):
         value = cb.getResource("time")
         other = cb.getResourceOther("time")
 
+        # label is not dominated
         if other < value:
             cb.reject()
 
