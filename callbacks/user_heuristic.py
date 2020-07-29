@@ -19,9 +19,7 @@ m = Model()
 m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
-g = m.addGraph(
-    obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B"
-)
+g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 # resource constriants
 m.addResourceDisposable(
@@ -29,16 +27,8 @@ m.addResourceDisposable(
 )
 
 m.addResourceDisposable(
-    graph=g,
-    consumptionType="E",
-    weight=t,
-    boundsType="V",
-    lb=a,
-    ub=b,
-    names="t",
+    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t",
 )
-
-m.addResourceElementary(graph=g, type="V", names="e")
 
 
 def callback(cb: CallbackModel, where: Where):
@@ -65,6 +55,9 @@ m.setCallback(callback)
 # set partitioning constraints
 for i in range(n)[1:-1]:
     m.addConstr(xsum(1 * x for x in g.vars if i == x.source) == 1)
+
+    packingSet = [x for x in g.vars if i == x.source]
+    m.addPackingSet(packingSet)
 
 status = m.optimize()
 

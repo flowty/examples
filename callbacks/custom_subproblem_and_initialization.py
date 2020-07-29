@@ -20,9 +20,7 @@ m = Model()
 m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
-g = m.addGraph(
-    obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B"
-)
+g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 
 def callback(cb: CallbackModel, where: Where):
@@ -43,14 +41,7 @@ def callback(cb: CallbackModel, where: Where):
         p = Model()
         p.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
         pg = p.addGraph(
-            directed=True,
-            obj=redCost,
-            edges=es,
-            source=0,
-            sink=n - 1,
-            L=1,
-            U=1,
-            type="B",
+            obj=redCost, edges=es, source=0, sink=n - 1, L=1, U=1, type="B",
         )
 
         # resource constriants
@@ -73,7 +64,19 @@ def callback(cb: CallbackModel, where: Where):
             ub=zeroB,
             names="t",
         )
-        p.addResourceElementary(graph=pg, type="V", names="e")
+
+        for i in range(n)[1:-1]:
+            w = [0] * n
+            w[i] = 1
+            p.addResourceDisposable(
+                graph=pg,
+                consumptionType="V",
+                weight=w,
+                boundsType="V",
+                lb=0,
+                ub=1,
+                names="e",
+            )
 
         status = p.optimize()
 
