@@ -106,7 +106,7 @@ for i in range(k):
         L=1,
         U=1,
         type="C",
-        names=f"x_{i}",
+        name=f"x_{i}",
     )
 
     time = [builder.travelTime[g.edges[e]["index"]] for e in es]
@@ -117,7 +117,7 @@ for i in range(k):
         boundsType="V",
         lb=0,
         ub=builder.demand["TransitTime"][i],
-        names=f"time_{i}",
+        name=f"time_{i}",
     )
     gs.append(gk)
 

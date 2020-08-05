@@ -13,11 +13,11 @@ g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 # adds resources variables to the graph
 m.addResourceDisposable(
-    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, names="d"
+    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
 )
 
 m.addResourceDisposable(
-    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t"
+    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, name="t"
 )
 
 # # set partition constriants

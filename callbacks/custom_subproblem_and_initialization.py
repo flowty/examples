@@ -40,7 +40,7 @@ def callback(cb: CallbackModel, where: Where):
             boundsType="V",
             lb=0,
             ub=Q,
-            names="d",
+            name="d",
         )
 
         p.addResourceDisposable(
@@ -50,10 +50,10 @@ def callback(cb: CallbackModel, where: Where):
             boundsType="V",
             lb=zeroA,
             ub=zeroB,
-            names="t",
+            name="t",
         )
 
-        # elementary paths? Needs license key
+        # elementary paths needs license key
         # for i in range(n)[1:-1]:
         #     w = [0] * n
         #     w[i] = 1
@@ -64,7 +64,7 @@ def callback(cb: CallbackModel, where: Where):
         #         boundsType="V",
         #         lb=0,
         #         ub=1,
-        #         names="e",
+        #         name=f"e_{i}",
         #     )
 
         status = p.optimize()

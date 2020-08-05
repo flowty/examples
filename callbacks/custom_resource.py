@@ -14,7 +14,7 @@ g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 # resource constriants
 m.addResourceDisposable(
-    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, names="d"
+    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
 )
 
 # m.addResourceDisposable(
@@ -24,7 +24,7 @@ m.addResourceDisposable(
 #     boundsType="V",
 #     lb=a,
 #     ub=b,
-#     names="t",
+#     name="t",
 # )
 
 
