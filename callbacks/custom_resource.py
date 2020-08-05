@@ -8,6 +8,7 @@ bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
+m.setParam("CallbackDP", "On")
 
 # the graph
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
