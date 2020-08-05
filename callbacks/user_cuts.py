@@ -1,11 +1,4 @@
-from flowty import (
-    Model,
-    xsum,
-    ParamKey,
-    ParamValue,
-    CallbackModel,
-    Where,
-)
+from flowty import Model, xsum, CallbackModel, Where
 
 K = 10
 
@@ -211,7 +204,6 @@ u = [
 D = [71.0, 32.0, 78.0, 40.0, 53.0, 80.0, 57.0, 72.0, 57.0, 73.0]
 
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # create graphs per commodity
 g = [
@@ -244,7 +236,7 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
 
 
 def callback(cb: CallbackModel, where: Where):
-    if where == Where.PathMipCuts:
+    if where == Where.PathMIPCuts:
         epsilon = 1e-4
         relax = cb.x
 

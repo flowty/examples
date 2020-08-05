@@ -1,4 +1,4 @@
-from flowty import Model, xsum, ParamKey, ParamValue
+from flowty import Model, xsum
 
 K = 10
 
@@ -204,7 +204,6 @@ u = [
 D = [71.0, 32.0, 78.0, 40.0, 53.0, 80.0, 57.0, 72.0, 57.0, 73.0]
 
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # create graphs per commodity
 g = [

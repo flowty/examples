@@ -1,13 +1,6 @@
 # vehicle routing with time windows
 
-from flowty import (
-    Model,
-    xsum,
-    ParamKey,
-    ParamValue,
-    CallbackModel,
-    Where,
-)
+from flowty import Model, xsum, CallbackModel, Where
 
 from flowty.datasets import vrp_rep
 
@@ -15,8 +8,6 @@ bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
-# use the PathMip algorithm
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
@@ -27,13 +18,13 @@ m.addResourceDisposable(
 )
 
 m.addResourceDisposable(
-    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t",
+    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t"
 )
 
 
 def callback(cb: CallbackModel, where: Where):
     # Heuristic
-    if where == Where.PathMipHeuristic:
+    if where == Where.PathMIPHeuristic:
         x = cb.x  # lp relaxation
 
         # add all 1-customer routes

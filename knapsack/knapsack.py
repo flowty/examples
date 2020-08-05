@@ -1,8 +1,4 @@
-from flowty import (
-    Model,
-    ParamKey,
-    ParamValue,
-)
+from flowty import Model
 
 p = [10, 13, 18, 31, 7, 15]
 w = [11, 15, 20, 35, 10, 33]
@@ -35,7 +31,7 @@ ws = w + [0] * len(w) * 2
 # 0-1 Knapsack
 
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
+m.setParam("Algorithm", "DP")
 
 g = m.addGraph(obj=ps, edges=es, source=0, sink=6, L=1, U=1, type="B")
 

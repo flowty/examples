@@ -1,44 +1,35 @@
 # vehicle routing with time windows
 
-from flowty import (
-    Model,
-    xsum,
-    ParamKey,
-    ParamValue,
-)
-
+from flowty import Model, xsum
 from flowty.datasets import vrp_rep
-
-# playing with logging
-import logging
-
-logging.basicConfig(format=logging.BASIC_FORMAT)
 
 bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R102_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
-m.name = name
 
 # one graph, it is identical for all vehicles.
-g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B",)
+g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 # adds resources variables to the graph
 m.addResourceDisposable(
-    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, names="d",
+    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, names="d"
 )
 
 m.addResourceDisposable(
-    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t",
+    graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, names="t"
 )
 
-# set partition constriants
-for i in range(n)[1:-1]:
-    m += xsum(x * 1 for x in g.vars if i == x.source) == 1
+# # set partition constriants
+# for i in range(n)[1:-1]:
+#     m += xsum(x * 1 for x in g.vars if i == x.source) == 1
 
-    packingSet = [x for x in g.vars if i == x.source]
-    m.addPackingSet(packingSet)
+#     packingSet = [x for x in g.vars if i == x.source]
+#     m.addPackingSet(packingSet)
+
+[m.addPackingSet([x for x in g.vars if i == x.source]) for i in range(n)[1:-1]]
+[m.addConstr(xsum(x * 1 for x in g.vars if i == x.source) == 1) for i in range(n)[1:-1]]
+
 
 m.write("dump")
 status = m.optimize()
@@ -46,7 +37,6 @@ status = m.optimize()
 print(f"ObjectiveValue {m.objectiveValue}")
 
 m2 = Model()
-m2.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 m2.read("dump")
 
 status = m2.optimize()

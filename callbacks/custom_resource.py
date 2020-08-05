@@ -1,13 +1,6 @@
 # vehicle routing with time windows
 
-from flowty import (
-    Model,
-    xsum,
-    ParamKey,
-    ParamValue,
-    CallbackModel,
-    Where,
-)
+from flowty import Model, xsum, CallbackModel, Where
 
 from flowty.datasets import vrp_rep
 
@@ -15,8 +8,6 @@ bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
-# use the PathMip algorithm
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
@@ -39,11 +30,11 @@ m.addResourceDisposable(
 
 def callback(cb: CallbackModel, where: Where):
     # initialization
-    if where == Where.DpInit:
+    if where == Where.DPInit:
         cb.setResource("time", 0)
 
     # extension
-    if where == Where.DpExtend:
+    if where == Where.DPExtend:
         e = cb.edge
         j = es[e][1]
         value = cb.getResource("time")
@@ -55,7 +46,7 @@ def callback(cb: CallbackModel, where: Where):
             cb.setResource("time", value)
 
     # dominance
-    if where == Where.DpDominate:
+    if where == Where.DPDominate:
         value = cb.getResource("time")
         other = cb.getResourceOther("time")
 

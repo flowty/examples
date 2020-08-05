@@ -1,14 +1,6 @@
 # vehicle routing with time windows
 
-from flowty import (
-    Model,
-    xsum,
-    ParamKey,
-    ParamValue,
-    OptimizationStatus,
-    CallbackModel,
-    Where,
-)
+from flowty import Model, xsum, OptimizationStatus, CallbackModel, Where
 
 from flowty.datasets import vrp_rep
 
@@ -16,8 +8,6 @@ bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
-# use the PathMip algorithm
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # the graph
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
@@ -25,7 +15,7 @@ g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 def callback(cb: CallbackModel, where: Where):
     # Pricing
-    if where == Where.PathMipSubproblem:
+    if where == Where.PathMIPSubproblem:
         # k = cb.k  # subproblem
         redCost = cb.reducedCost
         zeroEdges = cb.zeroEdges
@@ -39,10 +29,8 @@ def callback(cb: CallbackModel, where: Where):
             zeroB[e] = 0
 
         p = Model()
-        p.setParam(ParamKey.Algorithm, ParamValue.AlgorithmDp)
-        pg = p.addGraph(
-            obj=redCost, edges=es, source=0, sink=n - 1, L=1, U=1, type="B",
-        )
+        p.setParam("Algorithm", "DP")
+        pg = p.addGraph(obj=redCost, edges=es, source=0, sink=n - 1, L=1, U=1, type="B")
 
         # resource constriants
         p.addResourceDisposable(
@@ -65,18 +53,19 @@ def callback(cb: CallbackModel, where: Where):
             names="t",
         )
 
-        for i in range(n)[1:-1]:
-            w = [0] * n
-            w[i] = 1
-            p.addResourceDisposable(
-                graph=pg,
-                consumptionType="V",
-                weight=w,
-                boundsType="V",
-                lb=0,
-                ub=1,
-                names="e",
-            )
+        # elementary paths? Needs license key
+        # for i in range(n)[1:-1]:
+        #     w = [0] * n
+        #     w[i] = 1
+        #     p.addResourceDisposable(
+        #         graph=pg,
+        #         consumptionType="V",
+        #         weight=w,
+        #         boundsType="V",
+        #         lb=0,
+        #         ub=1,
+        #         names="e",
+        #     )
 
         status = p.optimize()
 
@@ -99,7 +88,7 @@ def callback(cb: CallbackModel, where: Where):
         cb.reject()
 
     # Initialization
-    if where == Where.PathMipInit:
+    if where == Where.PathMIPInit:
         # k = cb.k  # we don't need the supbroblem index here
 
         # add all 1-customer routes

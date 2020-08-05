@@ -10,7 +10,7 @@
 # https://doi.org/10.1016/j.tre.2015.01.005
 
 import networkx
-from flowty import Model, xsum, ParamKey, ParamValue, LinExpr
+from flowty import Model, xsum, LinExpr
 from flowty.datasets import linerlib
 
 # data = linerlib.fetch_linerlib(instance="Mediterranean")
@@ -75,7 +75,6 @@ g.add_edges_from(
 
 # model building
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 m.name = name
 
 # number of subproblems
