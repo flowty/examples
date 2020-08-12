@@ -42,7 +42,7 @@ def callback(cb: CallbackModel, where: Where):
         value = max(a[j], value + t[e])
 
         if value > b[j]:
-            cb.reject()
+            cb.skip()
         else:
             cb.setResource("time", value)
 
@@ -53,7 +53,7 @@ def callback(cb: CallbackModel, where: Where):
 
         # label is not dominated
         if other < value:
-            cb.reject()
+            cb.keep()
 
 
 m.setCallback(callback)

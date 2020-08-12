@@ -85,7 +85,8 @@ def callback(cb: CallbackModel, where: Where):
 
             cb.setStatus(status)
 
-        cb.reject()
+        # do not call internal algorithm
+        cb.skip()
 
     # Initialization
     if where == Where.PathMIPInit:
