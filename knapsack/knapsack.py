@@ -24,7 +24,7 @@ es = [
 ]
 
 # zero profit and weight for pick not edges
-ps = [-x for x in p] + [0] * len(w) 
+ps = [-x for x in p] + [0] * len(w)
 ws = w + [0] * len(w)
 
 m = Model()

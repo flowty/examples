@@ -226,7 +226,10 @@ g = [
 ]
 
 # design variables
-y = [m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}") for e, edge in enumerate(edges)]
+y = [
+    m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}")
+    for e, edge in enumerate(edges)
+]
 
 # capacity constraints
 [

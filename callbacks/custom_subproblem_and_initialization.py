@@ -13,7 +13,8 @@ m = Model()
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 
-# The callback where we overwrite the internal subproblem algorithm and solve it ourselves
+# The callback where we overwrite the internal subproblem algorithm
+# and solve it ourselves
 def callback(cb: CallbackModel, where: Where):
     # Pricing
     if where == Where.PathMIPSubproblem:
@@ -61,7 +62,7 @@ def callback(cb: CallbackModel, where: Where):
 
         # Elementary paths needs license key - too many resources
         # for now solve the relaxation with cycles on paths
-        # 
+        #
 
         # for i in range(n)[1:-1]:
         #     w = [0] * n

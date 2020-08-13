@@ -54,7 +54,7 @@ for k in range(n)[1:-1]:
     ]
 
     # time winwos
-    bigM = max(b)    
+    bigM = max(b)
     # q_ik + t_ij - q_jk <= (1 - x_ijk)M , forall (i,j)
     for j, e in enumerate(es):
         [m.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - t[j])]

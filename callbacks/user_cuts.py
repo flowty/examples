@@ -226,7 +226,10 @@ g = [
 ]
 
 # design variables
-y = [m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}") for e, edge in enumerate(edges)]
+y = [
+    m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}")
+    for e, edge in enumerate(edges)
+]
 
 # capacity constraints
 [
@@ -238,6 +241,7 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}") for e, edge in enum
 
 # flow variables placeholder used for lookup in callback
 x_vars = [g[k].vars for k in range(K)]
+
 
 # Add valid inequalities in the callback
 def callback(cb: CallbackModel, where: Where):
@@ -251,6 +255,7 @@ def callback(cb: CallbackModel, where: Where):
 
                 if relax[x_var.idx] > D[k] * relax[y_var.idx] + epsilon:
                     cb.addCut(x_var <= D[k] * y_var)
+
 
 m.setCallback(callback)
 

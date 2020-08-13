@@ -23,6 +23,7 @@ m.addResourceDisposable(
     graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, name="t"
 )
 
+
 # Add a solution consisting of all 1-customer routes
 # not a clever heuristic :)
 def callback(cb: CallbackModel, where: Where):

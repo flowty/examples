@@ -79,6 +79,8 @@ m = Model()
 # needs license key due to number of graphs
 user = "myUsername"
 key = "myFlowtyKey"
+user = "customer"
+key = "d97942a25ee8b0efccba7b685fee65ff"
 m.setLicenseKey(user, key)
 
 # number of subproblems
