@@ -6,16 +6,16 @@ Install with
 
 ```bash
 pip intall cffi
-pip install --index-url https://test.pypi.org/simple/ --no-deps flowty
+pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade flowty
 ```
 
-To run examples to
+To run examples do
 
 ```bash
-pip install python-igraph networkx scipy matplotlib
+pip install networkx scipy matplotlib
 ```
 
-If your are on the development version of `python-flowty` then update the shared libraries.
+## Virtual Environment
 
 Optionally make a virtual environment first
 
@@ -31,15 +31,6 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-Download and install `python-flowty`
-
-```bash
-cd ../python-flowty
-python download_libflowty.py
-pip install -e .
-cd ../python-flowty-examples
-```
-
 ## Jupyter Notebooks
 
 In the notebook repo there are some interactive examples.
@@ -53,11 +44,11 @@ pip install jupyter
 If you use a virtual environment add the kernel to jupyter
 
 ```sh
-python -m ipykernel install --user --name=myenv
+python -m ipykernel install --user --name=.venv
 ```
 
 Remove the kernel again by doing
 
 ```sh
-jupyter kernelspec uninstall myenv
+jupyter kernelspec uninstall .venv
 ```
