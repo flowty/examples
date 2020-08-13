@@ -50,21 +50,21 @@ jobs:
         pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
     - name: Test Knapsack
       run: |
-        python examples/knapsack/knapsack.py > log
+        python knapsack/knapsack.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue -41.0" ]
       shell: bash
     - name: Test VRPTW
       run: |
-        python examples/vrptw/vrptw.py > log
+        python vrptw/vrptw.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue 547.0999999999293" ]
       shell: bash
     - name: Test TT-FCMCF
       run: |
-        python examples/fcmcf/fcmcf.py > log
+        python fcmcf/fcmcf.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue 74079.00000000528" ]
