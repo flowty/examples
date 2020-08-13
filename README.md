@@ -6,7 +6,7 @@ Install with
 
 ```bash
 pip intall cffi
-pip install --index-url https://test.pypi.org/simple/ --no-deps --upgrade flowty
+pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
 ```
 
 To run examples do
