@@ -39,3 +39,25 @@ python download_libflowty.py
 pip install -e .
 cd ../python-flowty-examples
 ```
+
+## Jupyter Notebooks
+
+In the notebook repo there are some interactive examples.
+
+Install jupyter
+
+```sh
+pip install jupyter
+```
+
+If you use a virtual environment add the kernel to jupyter
+
+```sh
+python -m ipykernel install --user --name=myenv
+```
+
+Remove the kernel again by doing
+
+```sh
+jupyter kernelspec uninstall myenv
+```
