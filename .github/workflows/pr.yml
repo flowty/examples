@@ -1,0 +1,71 @@
+name: Python Pull Request CI
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install black flake8
+    - name: Flake8
+      run: |
+        flake8 **/*py
+    - name: Black
+      run: |
+        black **/*py
+
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: lint
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - windows-2019
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install cffi networkx
+        pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
+    - name: Test Knapsack
+      run: |
+        python knapsack/knapsack.py > log
+        cat log
+        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue -41.0" ]
+      shell: bash
+    - name: Test VRPTW
+      run: |
+        python vrptw/vrptw.py > log
+        cat log
+        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 547.0999999999293" ]
+      shell: bash
+    - name: Test TT-FCMCF
+      run: |
+        python fcmcf/fcmcf.py > log
+        cat log
+        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 74079.00000000528" ]
+      shell: bash
