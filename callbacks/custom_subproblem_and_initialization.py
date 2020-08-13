@@ -1,4 +1,4 @@
-# vehicle routing with time windows
+# Vehicle Routing Problem with Time Windows
 
 from flowty import Model, xsum, OptimizationStatus, CallbackModel, Where
 
@@ -13,6 +13,7 @@ m = Model()
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 
+# The callback where we overwrite the internal subproblem algorithm and solve it ourselves
 def callback(cb: CallbackModel, where: Where):
     # Pricing
     if where == Where.PathMIPSubproblem:
@@ -29,10 +30,14 @@ def callback(cb: CallbackModel, where: Where):
             zeroB[e] = 0
 
         p = Model()
+        # specify dynamic programming algorithm
         p.setParam("Algorithm", "DP")
+
+        # one graph for the subproblem
         pg = p.addGraph(obj=redCost, edges=es, source=0, sink=n - 1, L=1, U=1, type="B")
 
-        # resource constriants
+        # adds resources variables to the graph.
+        # demand and capacity
         p.addResourceDisposable(
             graph=pg,
             consumptionType="V",
@@ -43,6 +48,7 @@ def callback(cb: CallbackModel, where: Where):
             name="d",
         )
 
+        # travel time and customer tine windows
         p.addResourceDisposable(
             graph=pg,
             consumptionType="E",
@@ -53,7 +59,10 @@ def callback(cb: CallbackModel, where: Where):
             name="t",
         )
 
-        # elementary paths needs license key
+        # Elementary paths needs license key - too many resources
+        # for now solve the relaxation with cycles on paths
+        # 
+
         # for i in range(n)[1:-1]:
         #     w = [0] * n
         #     w[i] = 1
@@ -110,17 +119,19 @@ def callback(cb: CallbackModel, where: Where):
 
 m.setCallback(callback)
 
-# set partitioning constraints
+# set partition constriants
 for i in range(n)[1:-1]:
-    m.addConstr(xsum(1 * x for x in g.vars if i == x.source) == 1)
+    m += xsum(x * 1 for x in g.vars if i == x.source) == 1
+
+# packing set
+for i in range(n)[1:-1]:
+    m.addPackingSet([x for x in g.vars if i == x.source])
 
 status = m.optimize()
 
 print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
-xs = m.vars
-
-for var in xs:
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")

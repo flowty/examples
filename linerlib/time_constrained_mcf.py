@@ -75,7 +75,11 @@ g.add_edges_from(
 
 # model building
 m = Model()
-m.name = name
+
+# needs license key due to number of graphs
+user = "myUsername"
+key = "myFlowtyKey"
+m.setLicenseKey(user, key)
 
 # number of subproblems
 k = len(builder.demand["Destination"])
@@ -106,7 +110,7 @@ for i in range(k):
         L=1,
         U=1,
         type="C",
-        name=f"x_{i}",
+        names=f"x_{i}",
     )
 
     time = [builder.travelTime[g.edges[e]["index"]] for e in es]
@@ -150,8 +154,6 @@ status = m.optimize()
 print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
-xs = m.vars
-
-for var in xs:
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")

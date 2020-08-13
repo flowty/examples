@@ -1,4 +1,4 @@
-# vehicle routing with time windows
+# Vehicle Routing Problem with Time Windows
 
 from flowty import Model, xsum
 from flowty.datasets import vrp_rep
@@ -17,7 +17,7 @@ m.addResourceDisposable(
     graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
 )
 
-#travel time and customer tine windows
+# travel time and customer tine windows
 m.addResourceDisposable(
     graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, name="t"
 )

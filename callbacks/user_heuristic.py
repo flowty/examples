@@ -1,4 +1,4 @@
-# vehicle routing with time windows
+# Vehicle Routing Problem with Time Windows
 
 from flowty import Model, xsum, CallbackModel, Where
 
@@ -9,19 +9,22 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
 
-# the graph
+# one graph, it is identical for all vehicles
 g = m.addGraph(obj=c, edges=es, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
-# resource constriants
+# adds resources variables to the graph.
+# demand and capacity
 m.addResourceDisposable(
     graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
 )
 
+# travel time and customer tine windows
 m.addResourceDisposable(
     graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, name="t"
 )
 
-
+# Add a solution consisting of all 1-customer routes
+# not a clever heuristic :)
 def callback(cb: CallbackModel, where: Where):
     # Heuristic
     if where == Where.PathMIPHeuristic:
@@ -46,17 +49,13 @@ m.setCallback(callback)
 # set partitioning constraints
 for i in range(n)[1:-1]:
     m.addConstr(xsum(1 * x for x in g.vars if i == x.source) == 1)
-
-    packingSet = [x for x in g.vars if i == x.source]
-    m.addPackingSet(packingSet)
+    m.addPackingSet([x for x in g.vars if i == x.source])
 
 status = m.optimize()
 
 print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
-xs = m.vars
-
-for var in xs:
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")

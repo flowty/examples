@@ -1,3 +1,5 @@
+# Time Constrained Fixed-Charge Multicommodity Flow Problem
+
 from flowty import Model, xsum, CallbackModel, Where
 
 K = 10
@@ -224,7 +226,7 @@ g = [
 ]
 
 # design variables
-y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
+y = [m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}") for e, edge in enumerate(edges)]
 
 # capacity constraints
 [
@@ -234,23 +236,21 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
     for e, edge in enumerate(edges)
 ]
 
+# flow variables placeholder used for lookup in callback
+x_vars = [g[k].vars for k in range(K)]
 
+# Add valid inequalities in the callback
 def callback(cb: CallbackModel, where: Where):
     if where == Where.PathMIPCuts:
         epsilon = 1e-4
         relax = cb.x
 
         for e, y_var in enumerate(y):
-            edge = edges[e]
-
             for k in range(K):
-                for x in g[k].vars:
-                    if x.edge != edge:
-                        continue
+                x_var = x_vars[k][e]
 
-                    if relax[x.idx] > D[k] * relax[y_var.idx] + epsilon:
-                        cb.addCut(x <= D[k] * y_var)
-
+                if relax[x_var.idx] > D[k] * relax[y_var.idx] + epsilon:
+                    cb.addCut(x_var <= D[k] * y_var)
 
 m.setCallback(callback)
 
@@ -259,8 +259,6 @@ status = m.optimize()
 print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
-xs = m.vars
-
-for var in xs:
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")

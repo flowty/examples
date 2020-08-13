@@ -1,4 +1,4 @@
-# vehicle routing with time windows
+# Vehicle Routing Problem with Time Windows
 
 from flowty import Model, xsum
 from flowty.datasets import vrp_rep
@@ -80,4 +80,4 @@ print(f"ObjectiveValue {m.objectiveValue}")
 # get the variables
 for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")
