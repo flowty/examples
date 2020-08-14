@@ -49,7 +49,7 @@ def callback(cb: CallbackModel, where: Where):
             name="d",
         )
 
-        # travel time and customer tine windows
+        # travel time and customer time windows
         p.addResourceDisposable(
             graph=pg,
             consumptionType="E",
