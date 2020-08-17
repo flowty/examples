@@ -31,9 +31,9 @@ for i in range(n)[1:-1]:
     m.addPackingSet([x for x in g.vars if i == x.source])
 
 status = m.optimize()
-print(f"ObjectiveValue {m.objectiveValue}")
+print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
 
 # get the variable values
 for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} = {var.x}")
+        print(f"{var.name} = {round(var.x, 1)}")

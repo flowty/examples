@@ -74,10 +74,9 @@ for i in range(n)[1:-1]:
     m.addConstr(xsum(x * 1 for x, e in zip(xs, es * (n - 2)) if e[0] == i) == 1)
 
 status = m.optimize()
+print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
 
-print(f"ObjectiveValue {m.objectiveValue}")
-
-# get the variables
+# get the variable values
 for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} = {var.x}")
+        print(f"{var.name} = {round(var.x, 1)}")

@@ -38,10 +38,9 @@ m.addResourceDisposable(
 )
 
 status = m.optimize()
+print(f"ObjectiveValue {round(m.objectiveValue)}")
 
-print(f"ObjectiveValue {m.objectiveValue}")
-
-# get the variables
+# get the variable values
 for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} = {var.x}")
+        print(f"{var.name} = {round(var.x, 1)}")
