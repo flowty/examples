@@ -53,19 +53,19 @@ jobs:
         python knapsack/knapsack.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
-        [ "$OBJCETIVE_VALUE" = "ObjectiveValue -41.0" ]
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue -41" ]
       shell: bash
     - name: Test VRPTW
       run: |
         python vrptw/vrptw.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
-        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 547.0999999999293" ]
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 547.1" ]
       shell: bash
     - name: Test TT-FCMCF
       run: |
         python fcmcf/fcmcf.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
-        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 74079.00000000528" ]
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 74079.0" ]
       shell: bash
