@@ -76,11 +76,6 @@ g.add_edges_from(
 # model building
 m = Model()
 
-# needs license key due to number of graphs
-user = "myUsername"
-key = "myFlowtyKey"
-m.setLicenseKey(user, key)
-
 # number of subproblems
 k = len(builder.demand["Destination"])
 
@@ -150,10 +145,9 @@ for j, ks in enumerate(voyageEdgeVarsIds):
     m.addConstr(expr <= builder.capacity[j])
 
 status = m.optimize()
+print(f"ObjectiveValue {round(m.objectiveValue, 5)}")
 
-print(f"ObjectiveValue {m.objectiveValue}")
-
-# get the variables
+# get the variable values
 for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} = {var.x}")
+        print(f"{var.name} = {round(var.x, 5)}")

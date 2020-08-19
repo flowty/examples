@@ -25,27 +25,23 @@ for k in range(n)[1:-1]:
 
     # graph, flow constraints
     # sum_(0,j) x_0j = 1
-    [m.addConstr(xsum(1 * x for x, e in zip(xsk, es) if e[0] == 0) + xFeasiblity == 1)]
+    m.addConstr(xsum(1 * x for x, e in zip(xsk, es) if e[0] == 0) + xFeasiblity == 1)
 
     # sum_(j) x_ji - sum_(j) x_ij = 0 , forall i
     for i in range(n)[1:-1]:
-        [
-            m.addConstr(
-                xsum(1 * x for x, e in zip(xsk, es) if e[1] == i)
-                + xsum(-1 * x for x, e in zip(xsk, es) if e[0] == i)
-                == 0
-            )
-        ]
-    # sum_(j,n-1) x_j,n-1 = 1
-    [
         m.addConstr(
-            xsum(1 * x for x, e in zip(xsk, es) if e[1] == n - 1) + xFeasiblity == 1
+            xsum(1 * x for x, e in zip(xsk, es) if e[1] == i)
+            + xsum(-1 * x for x, e in zip(xsk, es) if e[0] == i)
+            == 0
         )
-    ]
+        # sum_(j,n-1) x_j,n-1 = 1
+    m.addConstr(
+        xsum(1 * x for x, e in zip(xsk, es) if e[1] == n - 1) + xFeasiblity == 1
+    )
 
     # capacity constraint
     # sum_(ij) d_i * x_ij <= Q
-    [m.addConstr(xsum(x * d[e[0]] for x, e in zip(xsk, es)) <= Q)]
+    m.addConstr(xsum(x * d[e[0]] for x, e in zip(xsk, es)) <= Q)
 
     # time stamp per vertex
     qt = [
@@ -57,17 +53,13 @@ for k in range(n)[1:-1]:
     bigM = max(b)
     # q_ik + t_ij - q_jk <= (1 - x_ijk)M , forall (i,j)
     for j, e in enumerate(es):
-        [m.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - t[j])]
+        m.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - t[j])
     # a_i sum_(j) x_ijk <= q_ik
     for i in range(n):
-        [m.addConstr(xsum(a[i] * x for x, e in zip(xsk, es) if e[0] == i) - qt[i] <= 0)]
+        m.addConstr(xsum(a[i] * x for x, e in zip(xsk, es) if e[0] == i) - qt[i] <= 0)
     # q_ik <= b_i sum_(j) x_ijk
     for i in range(n):
-        [
-            m.addConstr(
-                xsum(-b[i] * x for x, e in zip(xsk, es) if e[0] == i) + qt[i] <= 0
-            )
-        ]
+        m.addConstr(xsum(-b[i] * x for x, e in zip(xsk, es) if e[0] == i) + qt[i] <= 0)
 
 # set partition constraints
 for i in range(n)[1:-1]:
