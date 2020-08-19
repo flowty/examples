@@ -2,12 +2,12 @@
 
 from flowty import Model
 
-# profit and weitgh per item
+# profit and weight per item
 p = [10, 13, 18, 31, 7, 15]
 w = [11, 15, 20, 35, 10, 33]
 c = 47
 
-# multi-graph with edge pick/pick not item
+# multi-graph with edge 'pick'/'pick not' item
 es = [
     (0, 1),
     (1, 2),
@@ -23,7 +23,7 @@ es = [
     (5, 6),
 ]
 
-# zero profit and weight for pick not edges
+# zero profit and weight for 'pick not' edges
 ps = [-x for x in p] + [0] * len(w)
 ws = w + [0] * len(w)
 
