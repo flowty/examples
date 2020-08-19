@@ -62,10 +62,10 @@ jobs:
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue 547.1" ]
       shell: bash
-    - name: Test TT-FCMCF
+    - name: Test Linerlib
       run: |
-        python fcmcf/fcmcf.py > log
+        python linerlib/time_constrained_mcf.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
-        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 74079.0" ]
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 129200.0" ]
       shell: bash
