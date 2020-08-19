@@ -55,7 +55,7 @@ The model has a high degree of symmetry since all *K* vehicles are identical and
 
 ## A Path Formulation
 
-Historically path formulations have performed much better. Using Dantzig-Wolfe decomposition on the above and aggregating the K identical vehicles one arrives at a path based formulation
+Historically path formulations have performed much better. Using Dantzig-Wolfe decomposition on the above and aggregating the K identical vehicles one arrives at a path-based formulation
 
 ![Path formulation](https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%20%5Cmin%20%26%20%5Csum_%7Bp%20%5Cin%20P%7D%20%5Csum_%7B%28i%2Cj%29%20%5Cin%20E%7D%20c_%7Bij%7D%20%5Calpha_%7Bij%7D%5Ep%20%5Clambda_p%20%26%20%26%20%26%20%289%29%20%5C%5C%20%5Ctext%7Bsubject%20to%7D%20%26%20%5Csum_%7Bp%20%5Cin%20P%7D%20%5Csum_%7B%28i%2Cj%29%20%5Cin%20%5Cdelta%5E&plus;%7Bi%7D%7D%20%5Calpha_%7Bij%7D%5Ep%20%5Clambda_p%20%3D%201%20%26%20%5Cforall%20i%20%5Cin%20C%20%26%20%26%20%2810%29%20%5C%5C%20%26%20%5Clambda_p%20%5Cin%20%5Cmathbb%7BB%7D%20%26%20%5Cforall%20p%20%5Cin%20P%20%5Cend%7Baligned%7D)
 
@@ -69,13 +69,13 @@ Historically path formulations have performed much better. Using Dantzig-Wolfe d
 
 where *P* is the set of feasible paths a vehicle can use, lambda variables indicates if a path is used or not, and the alpha constant indicates if the edge from *i* to *j* is used on path *p*. As before the the objective (9) is to minimize total travel cost and constraints (10) ensures that customers are visited exactly once. The constraints correspond to (2) in the edge formulation and are also referred to as linking constraints - since they link paths together.
 
-The path based model is solved using column generation based approaches where paths (columns in the model matrix) are constructed on-the-fly and when needed. To construct paths one needs to solve a subproblem that is a variant of the shortest path problem, but with negative cost cycles and time window and capacity constraints on the path.
+The path-based model is solved using column generation based approaches where paths (columns in the model matrix) are constructed on-the-fly and when needed. To construct paths one needs to solve a subproblem that is a variant of the shortest path problem, but with negative cost cycles and time window and capacity constraints on the path.
 
 The subproblem is generally referred to as a resource constrained shortest path problem (RCSPP) where resources *R* are some quantity *q* accumulated along the path subject to bound constraints *[l, u]* at each node. For instances, travel time *t* and service time s accumulates for each traversed edge and customer serviced and must obey the time window *[a,b]* at each customer. Similarly, the demand *d* is accumulated for at each customer and must be with the vehicle capacity *[0,Q]* for at each step.
 
 ## Using Flowty's Solver
 
-The path based formulation is not readily solved with a standard mixed integer solver but can be solved with Flowty. Under the hood Flowty solves the path formulation and automatically adds paths by solving the RCSPP subproblem.
+The path-based formulation is not readily solved with a standard mixed integer solver but can be solved with Flowty. Under the hood Flowty solves the path formulation and automatically adds paths by solving the RCSPP subproblem.
 
 One needs to deliver 
 
@@ -128,7 +128,7 @@ and 0 otherwise. The resource bounds are
 
 ### Formulation
 
-The path based model expressed in edges
+The path-based model expressed in edges
 
 ![Formulation](https://latex.codecogs.com/png.latex?%5Cbegin%7Baligned%7D%20%5Cmin%20%26%20%5Csum_%7Bk%20%5Cin%20K%7D%20%5Csum_%7B%28i%2Cj%29%20%5Cin%20E%7D%20c_%7Bij%7D%20x_%7Bijk%7D%20%26%20%26%20%26%20%281%29%20%5C%5C%20%5Ctext%7Bsubject%20to%7D%20%26%20%5Csum_%7Bk%20%5Cin%20K%7D%20%5Csum_%7B%28i%2Cj%29%20%5Cin%20%5Cdelta%5E&plus;%7Bi%7D%7D%20x_%7Bijk%7D%20%3D%201%20%26%20%5Cforall%20i%20%5Cin%20C%20%26%20%26%20%282%29%20%5C%5C%20%26%20x_%7Bijk%7D%20%5Cin%20%5Cmathbb%7BB%7D%20%26%20%5Cforall%20%28i%2Cj%29%20%5Cin%20E%2C%20k%20%5Cin%20K%20%5Cend%7Baligned%7D)
 

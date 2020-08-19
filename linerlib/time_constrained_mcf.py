@@ -10,7 +10,7 @@
 # https://doi.org/10.1016/j.tre.2015.01.005
 
 import networkx
-from flowty import Model, xsum, ParamKey, ParamValue, LinExpr
+from flowty import Model, xsum, LinExpr
 from flowty.datasets import linerlib
 
 # data = linerlib.fetch_linerlib(instance="Mediterranean")
@@ -75,8 +75,11 @@ g.add_edges_from(
 
 # model building
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
-m.name = name
+
+# needs license key due to number of graphs
+user = "myUsername"
+key = "myFlowtyKey"
+m.setLicenseKey(user, key)
 
 # number of subproblems
 k = len(builder.demand["Destination"])
@@ -118,7 +121,7 @@ for i in range(k):
         boundsType="V",
         lb=0,
         ub=builder.demand["TransitTime"][i],
-        names=f"time_{i}",
+        name=f"time_{i}",
     )
     gs.append(gk)
 
@@ -151,8 +154,6 @@ status = m.optimize()
 print(f"ObjectiveValue {m.objectiveValue}")
 
 # get the variables
-xs = m.vars
-
-for var in xs:
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.name} id:{var.idx} = {var.x}")
+        print(f"{var.name} = {var.x}")

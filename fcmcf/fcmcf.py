@@ -1,4 +1,6 @@
-from flowty import Model, xsum, ParamKey, ParamValue
+# Time Constrained Fixed-Charge Multicommodity Flow Problem
+
+from flowty import Model, xsum
 
 K = 10
 
@@ -204,7 +206,6 @@ u = [
 D = [71.0, 32.0, 78.0, 40.0, 53.0, 80.0, 57.0, 72.0, 57.0, 73.0]
 
 m = Model()
-m.setParam(ParamKey.Algorithm, ParamValue.AlgorithmPathMip)
 
 # create graphs per commodity
 g = [
@@ -225,7 +226,10 @@ g = [
 ]
 
 # design variables
-y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
+y = [
+    m.addVar(lb=0, ub=1, obj=f[e], type="B", name=f"y_{e}")
+    for e, edge in enumerate(edges)
+]
 
 # capacity constraints
 [
@@ -236,12 +240,9 @@ y = [m.addVar(lb=0, ub=1, obj=f[e], type="B") for e, edge in enumerate(edges)]
 ]
 
 status = m.optimize()
+print(f"ObjectiveValue {round(m.objectiveValue, 2)}")
 
-print(f"ObjectiveValue {m.objectiveValue}")
-
-# get the variables
-xs = m.vars
-
-for var in xs:
+# get the variable values
+for var in m.vars:
     if var.x > 0:
-        print(f"{var.idx} = {var.x}")
+        print(f"{var.name} = {round(var.x, 1)}")
