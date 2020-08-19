@@ -43,6 +43,15 @@ def callback(cb: CallbackModel, where: Where):
 
         cb.addSolution(cost, xEdges)
 
+    # Verify solution
+    if where == Where.PathMIPSolution:
+        x = cb.x  # candidate solution
+
+        # check is solution is infeasible and skip it if so
+        isInfeasible = False
+        if isInfeasible:
+            cb.skip()
+
 
 m.setCallback(callback)
 
