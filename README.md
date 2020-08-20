@@ -1,6 +1,6 @@
 # Examples for the Flowty Network Optimzation Solver
 
-[![Gitter](https://badges.gitter.im/flowty/community.svg)](https://gitter.im/flowty/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/flowty/community.svg)](https://gitter.im/flowty/community)
 
 Go to [flowty.ai](https://flowty.ai) or directly to the [docs](https:/docs.flowty.ai) for more information.
 
