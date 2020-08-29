@@ -48,6 +48,13 @@ jobs:
       run: |
         pip install cffi networkx
         pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
+    - name: Test VRPTW MIP
+      run: |
+        python vrptw/vrptw_mip.py 4 > log
+        cat log
+        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 92.9" ]
+      shell: bash
     - name: Test Knapsack
       run: |
         python knapsack/knapsack.py > log

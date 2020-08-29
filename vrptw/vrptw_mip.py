@@ -1,5 +1,6 @@
 # Vehicle Routing Problem with Time Windows
 
+import sys
 from flowty import Model, xsum
 from flowty.datasets import vrp_rep
 
@@ -8,6 +9,29 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
 m.setParam("Algorithm", "MIP")
+
+# Get reduced number of customers from cmd line
+if len(sys.argv) > 1:
+    numCustomer = int(sys.argv[1])
+
+    print(f"Number of customers: {numCustomer}")
+
+    # strip customers
+    old_n = n
+    n = numCustomer + 2
+    data = [
+        ((e[0], e[1]), c[i], t[i])
+        for i, e in enumerate(es)
+        if (e[0] < n - 1 and e[1] < n - 1) or (e[0] < n - 1 and e[1] == old_n - 1)
+    ]
+    es = [e[0] for e in data]
+    es = [e if e[1] != old_n - 1 else (e[0], n - 1) for e in es]
+    c = [e[1] for e in data]
+    t = [e[2] for e in data]
+
+    d = d[: n - 1] + [d[-1]]
+    a = a[: n - 1] + [a[-1]]
+    b = b[: n - 1] + [b[-1]]
 
 # placeholder for added variables
 xs = []
@@ -50,20 +74,22 @@ for k in range(n)[1:-1]:
     ]
 
     # time winwos
-    bigM = max(b)
     # q_ik + t_ij - q_jk <= (1 - x_ijk)M , forall (i,j)
     for j, e in enumerate(es):
+        bigM = b[e[0]] + t[j]
         m.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - t[j])
     # a_i sum_(j) x_ijk <= q_ik
-    for i in range(n):
+    for i in range(n)[1:-1]:
         m.addConstr(xsum(a[i] * x for x, e in zip(xsk, es) if e[0] == i) - qt[i] <= 0)
     # q_ik <= b_i sum_(j) x_ijk
-    for i in range(n):
+    for i in range(n)[1:-1]:
         m.addConstr(xsum(-b[i] * x for x, e in zip(xsk, es) if e[0] == i) + qt[i] <= 0)
 
 # set partition constraints
 for i in range(n)[1:-1]:
     m.addConstr(xsum(x * 1 for x, e in zip(xs, es * (n - 2)) if e[0] == i) == 1)
+
+m.write("vrptw_mip2")
 
 status = m.optimize()
 print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
