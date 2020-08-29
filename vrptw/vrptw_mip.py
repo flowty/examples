@@ -12,15 +12,19 @@ m.setParam("Algorithm", "MIP")
 # strip customers
 old_n = n
 n = 10
-data = [((e[0],e[1]), c[i], t[i]) for i, e in enumerate(es) if (e[0] < n-1 and e[1] < n-1) or (e[0] < n-1 and e[1] == old_n-1) ]
-es = [ e[0] for e in data]
-es = [ e if e[1] != old_n-1 else (e[0], n-1) for e in es]
-c = [ e[1] for e in data]
-t = [ e[2] for e in data]
+data = [
+    ((e[0], e[1]), c[i], t[i])
+    for i, e in enumerate(es)
+    if (e[0] < n - 1 and e[1] < n - 1) or (e[0] < n - 1 and e[1] == old_n - 1)
+]
+es = [e[0] for e in data]
+es = [e if e[1] != old_n - 1 else (e[0], n - 1) for e in es]
+c = [e[1] for e in data]
+t = [e[2] for e in data]
 
-d = d[:n-1] + [d[-1]]
-a = a[:n-1] + [a[-1]]
-b = b[:n-1] + [b[-1]]
+d = d[: n - 1] + [d[-1]]
+a = a[: n - 1] + [a[-1]]
+b = b[: n - 1] + [b[-1]]
 
 # placeholder for added variables
 xs = []
