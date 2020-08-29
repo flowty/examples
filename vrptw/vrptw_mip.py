@@ -1,5 +1,6 @@
 # Vehicle Routing Problem with Time Windows
 
+import sys
 from flowty import Model, xsum
 from flowty.datasets import vrp_rep
 
@@ -9,29 +10,35 @@ name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]
 m = Model()
 m.setParam("Algorithm", "MIP")
 
-# strip customers
-old_n = n
-n = 10
-data = [
-    ((e[0], e[1]), c[i], t[i])
-    for i, e in enumerate(es)
-    if (e[0] < n - 1 and e[1] < n - 1) or (e[0] < n - 1 and e[1] == old_n - 1)
-]
-es = [e[0] for e in data]
-es = [e if e[1] != old_n - 1 else (e[0], n - 1) for e in es]
-c = [e[1] for e in data]
-t = [e[2] for e in data]
+# Get reduced number of customers from cmd line
+if len(sys.argv) > 1:
+    numCustomer = int(sys.argv[1])
 
-d = d[: n - 1] + [d[-1]]
-a = a[: n - 1] + [a[-1]]
-b = b[: n - 1] + [b[-1]]
+    print(f"Number of customers: {numCustomer}")
+
+    # strip customers
+    old_n = n
+    n = numCustomer + 2
+    data = [
+        ((e[0], e[1]), c[i], t[i])
+        for i, e in enumerate(es)
+        if (e[0] < n - 1 and e[1] < n - 1) or (e[0] < n - 1 and e[1] == old_n - 1)
+    ]
+    es = [e[0] for e in data]
+    es = [e if e[1] != old_n - 1 else (e[0], n - 1) for e in es]
+    c = [e[1] for e in data]
+    t = [e[2] for e in data]
+
+    d = d[: n - 1] + [d[-1]]
+    a = a[: n - 1] + [a[-1]]
+    b = b[: n - 1] + [b[-1]]
 
 # placeholder for added variables
 xs = []
 
 # construct a 3-index model
 # add varaibles and constraints for each subproblem
-for k in range(n)[1:3]:
+for k in range(n)[1:-1]:
     # edge variables for this subproblem
     xsk = [
         m.addVar(lb=0, ub=1, obj=c[i], type="B", name=f"x_({e[0]},{e[1]})_{k}")
@@ -81,6 +88,8 @@ for k in range(n)[1:3]:
 # set partition constraints
 for i in range(n)[1:-1]:
     m.addConstr(xsum(x * 1 for x, e in zip(xs, es * (n - 2)) if e[0] == i) == 1)
+
+m.write("vrptw_mip2")
 
 status = m.optimize()
 print(f"ObjectiveValue {round(m.objectiveValue, 1)}")

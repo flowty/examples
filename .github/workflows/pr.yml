@@ -50,10 +50,10 @@ jobs:
         pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
     - name: Test VRPTW MIP
       run: |
-        python vrptw/vrptw_mip.py > log
+        python vrptw/vrptw_mip.py 4 > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
-        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 177.2" ]
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue 92.9" ]
       shell: bash
     - name: Test Knapsack
       run: |
