@@ -89,8 +89,6 @@ for k in range(n)[1:-1]:
 for i in range(n)[1:-1]:
     m.addConstr(xsum(x * 1 for x, e in zip(xs, es * (n - 2)) if e[0] == i) == 1)
 
-m.write("vrptw_mip2")
-
 status = m.optimize()
 print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
 
