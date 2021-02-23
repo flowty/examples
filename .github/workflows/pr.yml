@@ -76,7 +76,7 @@ jobs:
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue 129200.0" ]
       shell: bash
-    - name: Test Xpress (Linux)
+    - name: Test with Xpress (Linux)
       run: |
         pip install xpress
         export XPRESSDIR=$(python -c "import pathlib; import site; print(pathlib.Path([p for p in site.getsitepackages() if p.endswith('site-packages')][0], 'xpress'))")
@@ -84,9 +84,22 @@ jobs:
         export LD_LIBRARY_PATH=$XPRESSDIR/lib:$LD_LIBRARY_PATH
         eval "(cd $XPRESSDIR/license && ln -s community-xpauth.xpr xpauth.xpr)"
         eval "(cd $XPRESSDIR/lib && ln -s libxprs.so.37.01 libxprs.so)"
-        python xpress/xpress.py > log
+        python examples/xpress/xpress.py > log
         cat log
-        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        export OBJCETIVE_VALUE=$(cat log | grep -a ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue -122.5" ]
-      shell: bash
-      if: matrix.os.startswith('ubuntu')
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Test with Windows (Windows)
+      run: |
+        pip install xpress
+        python -c "import pathlib; import site; print(pathlib.Path([p for p in site.getsitepackages() if p.endswith('site-packages')][0], 'xpress'))" > tmp.txt
+        set /P XPRESSDIR=<tmp.txt
+        set PATH=%XPRESSDIR%\lib;%PATH%
+        copy %XPRESSDIR%\license\community-xpauth.xpr %XPRESSDIR%\lib\xpauth.xpr
+        python examples/xpress/xpress.py > log 2>&1
+        type log
+        findstr "ObjectiveValue" log > tmp.txt 2>&1
+        set /P OBJCETIVE_VALUE=<tmp.txt
+        IF "%OBJCETIVE_VALUE%" EQU "ObjectiveValue -122.5" (exit 0) ELSE (exit 1)
+      shell: cmd
+      if: startsWith(matrix.os, 'windows')
