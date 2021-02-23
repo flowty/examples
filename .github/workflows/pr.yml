@@ -84,7 +84,7 @@ jobs:
         export LD_LIBRARY_PATH=$XPRESSDIR/lib:$LD_LIBRARY_PATH
         eval "(cd $XPRESSDIR/license && ln -s community-xpauth.xpr xpauth.xpr)"
         eval "(cd $XPRESSDIR/lib && ln -s libxprs.so.37.01 libxprs.so)"
-        python examples/xpress/xpress.py > log
+        python xpress/xpress.py > log
         cat log
         export OBJCETIVE_VALUE=$(cat log | grep -a ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue -122.5" ]
@@ -96,7 +96,7 @@ jobs:
         set /P XPRESSDIR=<tmp.txt
         set PATH=%XPRESSDIR%\lib;%PATH%
         copy %XPRESSDIR%\license\community-xpauth.xpr %XPRESSDIR%\lib\xpauth.xpr
-        python examples/xpress/xpress.py > log 2>&1
+        python xpress/xpress.py > log 2>&1
         type log
         findstr "ObjectiveValue" log > tmp.txt 2>&1
         set /P OBJCETIVE_VALUE=<tmp.txt
