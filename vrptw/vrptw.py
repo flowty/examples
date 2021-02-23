@@ -1,7 +1,7 @@
 # Vehicle Routing Problem with Time Windows
 
 from flowty import Model, xsum
-from flowty.datasets import vrp_rep
+from or_datasets import vrp_rep
 
 bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R102_025")
 name, n, es, c, d, Q, t, a, b, x, y = bunch["instance"]

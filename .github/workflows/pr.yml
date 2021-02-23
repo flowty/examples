@@ -46,7 +46,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        pip install cffi networkx
+        pip install cffi networkx or_datasets
         pip install --index-url https://test.pypi.org/simple/ --no-deps --pre --upgrade flowty
     - name: Test VRPTW MIP
       run: |
@@ -76,3 +76,17 @@ jobs:
         export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
         [ "$OBJCETIVE_VALUE" = "ObjectiveValue 129200.0" ]
       shell: bash
+    - name: Test Xpress (Linux)
+      run: |
+        pip install xpress
+        export XPRESSDIR=$(python -c "import pathlib; import site; print(pathlib.Path([p for p in site.getsitepackages() if p.endswith('site-packages')][0], 'xpress'))")
+        export XPRESS=$XPRESSDIR/license
+        export LD_LIBRARY_PATH=$XPRESSDIR/lib:$LD_LIBRARY_PATH
+        eval "(cd $XPRESSDIR/license && ln -s community-xpauth.xpr xpauth.xpr)"
+        eval "(cd $XPRESSDIR/lib && ln -s libxprs.so.37.01 libxprs.so)"
+        python xpress/xpress.py > log
+        cat log
+        export OBJCETIVE_VALUE=$(cat log | grep ObjectiveValue)
+        [ "$OBJCETIVE_VALUE" = "ObjectiveValue -122.5" ]
+      shell: bash
+      if: matrix.os.startswith('ubuntu')
