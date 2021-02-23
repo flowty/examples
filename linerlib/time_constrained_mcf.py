@@ -11,7 +11,7 @@
 
 import networkx
 from flowty import Model, xsum, LinExpr
-from flowty.datasets import linerlib
+from or_datasets import linerlib
 
 # data = linerlib.fetch_linerlib(instance="Mediterranean")
 # network = linerlib.fetch_linerlib_rotations(instance="Med_base_best")
