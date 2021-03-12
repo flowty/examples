@@ -83,17 +83,19 @@ def callback(cb: CallbackModel, where: Where):
             status == OptimizationStatus.Optimal
             or status == OptimizationStatus.Feasible
         ):
-            cost = p.objectiveValue
+            reducedCost = p.objectiveValue
+            actualCost = 0
 
-            if cost < convexDual - 1e-4:
+            if reducedCost < convexDual - 1e-4:
                 path = []
                 for var in p.vars:
                     if var.x > 0:
+                        actualCost += c[var.idx]
                         path.append(var.idx)
                         print(f"{var.name} id:{var.idx} = {var.x}")
-                cb.addPath(cost, path)
+                cb.addPathReducedCost(reducedCost, actualCost, path)
 
-            cb.setStatus(status)
+        cb.setStatus(status)
 
         # do not call internal algorithm
         cb.skip()
