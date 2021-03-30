@@ -145,9 +145,9 @@ for j, ks in enumerate(voyageEdgeVarsIds):
     m.addConstr(expr <= builder.capacity[j])
 
 status = m.optimize()
-print(f"ObjectiveValue {round(m.objectiveValue, 5)}")
+# print(f"ObjectiveValue {round(m.objectiveValue, 5)}")
 
 # get the variable values
-for var in m.vars:
-    if var.x > 0:
-        print(f"{var.name} = {round(var.x, 5)}")
+# for var in m.vars:
+#     if var.x > 0:
+#         print(f"{var.name} = {round(var.x, 5)}")
