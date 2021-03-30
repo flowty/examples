@@ -26,8 +26,6 @@ m += -x1 + x2 + x3 + 10 * x4 <= 20
 m += x1 - 3 * x2 + x3 <= 30
 m += x2 - 3.5 * x4 == 0
 
-m.optimize()
-
 status = m.optimize()
 print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
 
