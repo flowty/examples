@@ -47,34 +47,70 @@ jobs:
     - name: Install dependencies
       run: |
         pip install cffi networkx or_datasets flowty
-    - name: Test VRPTW MIP
-      run: |
-        python vrptw/vrptw_mip.py 4 > log
-        cat log
-        export OBJECTIVE_VALUE=$(cat log | grep UB)
-        [ "$OBJECTIVE_VALUE" = "UB     :           92.9" ]
-      shell: bash
-    - name: Test Knapsack
-      run: |
+    - name: Test Knapsack (Linux)
+      run: |        
         python knapsack/knapsack.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep UB)
+        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
         [ "$OBJECTIVE_VALUE" = "UB     :            -41" ]
-      shell: bash
-    - name: Test VRPTW
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Test Knapsack (Windows)
+      run: |
+        python knapsack/knapsack.py > log 2>&1
+        type log
+        findstr /b "UB     :" log > tmp.txt 2>&1
+        set /P OBJECTIVE_VALUE=<tmp.txt
+        IF "%OBJECTIVE_VALUE%" EQU "UB     :            -41" (exit 0) ELSE (exit 1)
+      shell: cmd
+      if: startsWith(matrix.os, 'windows')
+    - name: Test VRPTW (Linux)
       run: |
         python vrptw/vrptw.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep UB)
+        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
         [ "$OBJECTIVE_VALUE" = "UB     :          547.1" ]
-      shell: bash
-    - name: Test Linerlib
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Test VRPTW (Windows)
+      run: |
+        python vrptw/vrptw.py > log 2>&1
+        type log
+        findstr /b "UB     :" log > tmp.txt 2>&1
+        set /P OBJECTIVE_VALUE=<tmp.txt
+        IF "%OBJECTIVE_VALUE%" EQU "UB     :          547.1" (exit 0) ELSE (exit 1)
+      shell: cmd
+      if: startsWith(matrix.os, 'windows')
+    - name: Test VRPTW MIP (Linux)
+      run: |
+        python vrptw/vrptw_mip.py 4 > log
+        cat log
+        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
+        [ "$OBJECTIVE_VALUE" = "UB     :           92.9" ]
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Test VRPTW MIP (Windows)
+      run: |
+        python vrptw/vrptw_mip.py 4 > log 2>&1
+        type log
+        findstr /b "UB     :" log > tmp.txt 2>&1
+        set /P OBJECTIVE_VALUE=<tmp.txt
+        IF "%OBJECTIVE_VALUE%" EQU "UB     :           92.9" (exit 0) ELSE (exit 1)
+      shell: cmd
+      if: startsWith(matrix.os, 'windows')
+    - name: Test Linerlib (Linux)
       run: |
         python linerlib/time_constrained_mcf.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep UB)
-        [ "$OBJECTIVE_VALUE" = "UB     :       129200.0" ]
-      shell: bash
+        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
+        [ "$OBJECTIVE_VALUE" = "UB     :         129200" ]
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Test Linerlib (Windows)
+      run: |
+        python linerlib/time_constrained_mcf.py > log 2>&1
+        type log
+        findstr /b "UB     :" log > tmp.txt 2>&1
+        set /P OBJECTIVE_VALUE=<tmp.txt
+        IF "%OBJECTIVE_VALUE%" EQU "UB     :         129200" (exit 0) ELSE (exit 1)
+      shell: cmd
+      if: startsWith(matrix.os, 'windows')
     - name: Test with Xpress (Linux)
       run: |
         pip install xpress
@@ -85,7 +121,7 @@ jobs:
         eval "(cd $XPRESSDIR/lib && ln -s libxprs.so.37.01 libxprs.so)"
         python xpress/xpress.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep UB)
+        export OBJECTIVE_VALUE=$(cat log | grep -a "UB     :")
         [ "$OBJECTIVE_VALUE" = "UB     :         -122.5" ]
       if: startsWith(matrix.os, 'ubuntu')
     - name: Test with Windows (Windows)
@@ -97,7 +133,7 @@ jobs:
         copy %XPRESSDIR%\license\community-xpauth.xpr %XPRESSDIR%\lib\xpauth.xpr
         python xpress/xpress.py > log 2>&1
         type log
-        findstr "ObjectiveValue" log > tmp.txt 2>&1
+        findstr /b "UB     :" log > tmp.txt 2>&1
         set /P OBJECTIVE_VALUE=<tmp.txt
         IF "%OBJECTIVE_VALUE%" EQU "UB     :         -122.5" (exit 0) ELSE (exit 1)
       shell: cmd
