@@ -52,7 +52,7 @@ jobs:
         python knapsack/knapsack.py > log
         cat log
         export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :            -41" ]
+        [ "$OBJECTIVE_VALUE" = "UB     :          -8373" ]
       if: startsWith(matrix.os, 'ubuntu')
     - name: Test Knapsack (Windows)
       run: |
@@ -60,7 +60,7 @@ jobs:
         type log
         findstr /b "UB     :" log > tmp.txt 2>&1
         set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :            -41" (exit 0) ELSE (exit 1)
+        IF "%OBJECTIVE_VALUE%" EQU "UB     :          -8373" (exit 0) ELSE (exit 1)
       shell: cmd
       if: startsWith(matrix.os, 'windows')
     - name: Test VRPTW (Linux)
