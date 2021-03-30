@@ -1,7 +1,6 @@
 # Vehicle Routing Problem with Time Windows
-from flowty import Model, xsum, LinExpr
 import sys
-from flowty import Model, xsum
+from flowty import Model, xsum, LinExpr
 from or_datasets import vrp_rep
 
 bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R102_025")
