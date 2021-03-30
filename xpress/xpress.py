@@ -27,9 +27,9 @@ m += x1 - 3 * x2 + x3 <= 30
 m += x2 - 3.5 * x4 == 0
 
 status = m.optimize()
-print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
+# print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
 
 # get the variable values
-for var in m.vars:
-    if var.x > 0:
-        print(f"{var.name} = {round(var.x, 1)}")
+# for var in m.vars:
+#     if var.x > 0:
+#         print(f"{var.name} = {round(var.x, 1)}")
