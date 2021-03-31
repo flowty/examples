@@ -35,14 +35,14 @@ if len(sys.argv) > 1:
 g = m.addGraph(obj=c, edges=E, source=0, sink=n - 1, L=1, U=n - 2, type="B")
 
 # adds resources variables to the graph.
-# demand and capacity
-m.addResourceDisposable(
-    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
-)
-
 # travel time and customer time windows
 m.addResourceDisposable(
     graph=g, consumptionType="E", weight=t, boundsType="V", lb=a, ub=b, name="t"
+)
+
+# demand and capacity
+m.addResourceDisposable(
+    graph=g, consumptionType="V", weight=d, boundsType="V", lb=0, ub=Q, name="d"
 )
 
 # set partition constriants
