@@ -1,5 +1,4 @@
 # Vehicle Routing Problem with Time Windows
-
 import math
 from flowty import Model, xsum, CallbackModel, Where
 from or_datasets import vrp_rep

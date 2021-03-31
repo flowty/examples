@@ -20,7 +20,6 @@ data = linerlib.fetch_linerlib(instance="Baltic")
 network = linerlib.fetch_linerlib_rotations(instance="Baltic_best_base")
 
 name, _, _, _, _ = data["instance"]
-
 builder = linerlib.GraphBuilder(data, network)
 
 # build the graph
