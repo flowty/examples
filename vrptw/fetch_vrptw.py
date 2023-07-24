@@ -3,14 +3,18 @@ from itertools import islice
 import os
 import shutil
 import tempfile
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 import urllib.request
+
 
 def fetch(collection: str, instance: str, n: int = 100):
     filename = os.path.join(tempfile.gettempdir(), f"{collection}_{instance}.txt")
 
     if not os.path.exists(filename):
-        url = f"http://vrp.atd-lab.inf.puc-rio.br/media/com_vrp/instances/{collection}/{instance}.txt"
+        url = (
+            "http://vrp.atd-lab.inf.puc-rio.br/media/com_vrp/instances/"
+            f"{collection}/{instance}.txt"
+        )
         headers = {"Accept": "application/xml"}
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req) as response:
@@ -24,12 +28,11 @@ def fetch(collection: str, instance: str, n: int = 100):
         line = next(file)
         line = next(file)
         _, Q = (int(val) for val in line.split())
-        
+
         line = next(file)
         line = next(file)
         line = next(file)
         line = next(file)
-        # line = next(file)
 
         x: List[int] = []
         y: List[int] = []
@@ -37,7 +40,8 @@ def fetch(collection: str, instance: str, n: int = 100):
         a: List[int] = []
         b: List[int] = []
         s: List[int] = []
-        def appender(line):
+        lines = islice(file, n + 1)
+        for line in lines:
             _, xx, yy, dd, aa, bb, ss = (int(val) for val in line.split())
             x.append(xx)
             y.append(yy)
@@ -45,10 +49,6 @@ def fetch(collection: str, instance: str, n: int = 100):
             a.append(aa)
             b.append(bb)
             s.append(ss)
-
-        lines = islice(file, n+1)
-        for line in lines:
-            appender(line)
 
         # Clone depot
         x.append(x[0])
@@ -61,21 +61,24 @@ def fetch(collection: str, instance: str, n: int = 100):
         E: List[Tuple[int, int]] = []
         c: List[float] = []
         t: List[float] = []
-        for i in range(n+2):
-            for j in range(n+2):
+        for i in range(n + 2):
+            for j in range(n + 2):
                 if j <= i:
                     continue
                 value = (
-                    int(math.sqrt(math.pow(x[i] - x[j], 2) + math.pow(y[i] - y[j], 2)) * 10)
+                    int(
+                        math.sqrt(math.pow(x[i] - x[j], 2) + math.pow(y[i] - y[j], 2))
+                        * 10
+                    )
                     / 10
                 )
-                if i != n+1 and j != 0 and not (i == 0 and j == n+1):
+                if i != n + 1 and j != 0 and not (i == 0 and j == n + 1):
                     c.append(value)
                     t.append(value + s[i])
                     E.append((i, j))
-                if j != n+1 and i != 0:
+                if j != n + 1 and i != 0:
                     c.append(value)
                     t.append(value + s[j])
                     E.append((j, i))
-    
-    return name, n+2, E, c, d, Q, t, a, b, x, y
+
+    return name, n + 2, E, c, d, Q, t, a, b, x, y

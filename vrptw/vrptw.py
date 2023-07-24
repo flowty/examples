@@ -1,12 +1,8 @@
 # Vehicle Routing Problem with Time Windows
-import sys
 from flowty import Model, xsum
 from fetch_vrptw import fetch
-from or_datasets import vrp_rep
 
 name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R101", 25)
-# bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R101_025")
-# name, n, E, c, d, Q, t, a, b, x, y = bunch["instance"]
 
 m = Model()
 
@@ -25,17 +21,11 @@ m.addResourceDisposable(
 )
 
 # set partition constriants
-for i in range(1, n-1):
+for i in range(1, n - 1):
     m += xsum(x * 1 for x in g.vars if i == x.source) == 1
 
 # packing set
-for i in range(1, n-1):
+for i in range(1, n - 1):
     m.addPackingSet([x for x in g.vars if i == x.source])
 
 status = m.optimize()
-# print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
-
-# get the variable values
-# for var in m.vars:
-#     if var.x > 0:
-#         print(f"{var.name} = {round(var.x, 1)}")
