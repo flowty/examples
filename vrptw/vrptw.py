@@ -2,7 +2,7 @@
 from flowty import Model, xsum
 from fetch_vrptw import fetch
 
-name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R101", 25)
+name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R102", 25)
 
 m = Model()
 
