@@ -1,10 +1,9 @@
 # Vehicle Routing Problem with Time Windows
 import sys
 from flowty import Model, xsum, LinExpr
-from or_datasets import vrp_rep
+from fetch_vrptw import fetch
 
-bunch = vrp_rep.fetch_vrp_rep("solomon-1987-r1", instance="R102_025")
-name, n, E, c, d, Q, t, a, b, x, y = bunch["instance"]
+name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R102", 25)
 
 m = Model()
 m.setParam("Algorithm", "MIP")
@@ -97,9 +96,3 @@ for i in range(n)[1:-1]:
     m.addConstr(expr == 1)
 
 status = m.optimize()
-# print(f"ObjectiveValue {round(m.objectiveValue, 1)}")
-
-# get the variable values
-# for var in m.vars:
-#     if var.x > 0:
-#         print(f"{var.name} = {round(var.x, 1)}")
