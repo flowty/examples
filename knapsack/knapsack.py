@@ -1,10 +1,10 @@
 # 0-1 Knapsack problem
 from flowty import Model
-from or_datasets import pisinger
+from fetch_knapsack import fetch
 
-bunch = pisinger.fetch_knapsack("small", instance="knapPI_1_50_1000_1")
-name, n, c, p, w, z, x = bunch["instance"]
+name, n, c, p, w, z, x = fetch("small", instance="knapPI_1_50_1000_1")
 
+# Construct multi-graph
 E = [(i, i + 1) for i in range(n)] + [(i, i + 1) for i in range(n)]
 
 # zero profit and weight for 'pick not' edges
@@ -23,9 +23,3 @@ m.addResourceDisposable(
 )
 
 status = m.optimize()
-# print(f"ObjectiveValue {round(m.objectiveValue)} == {-z}")
-
-# get the variable values
-# for var in m.vars:
-#     if var.x > 0:
-#         print(f"{var.name} = {round(var.x, 1)}")
