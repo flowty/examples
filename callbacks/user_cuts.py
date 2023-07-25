@@ -36,7 +36,6 @@ def callback(cb: CallbackModel, where: Where):
         # Enumerate cuts for |S| = 2
         for i in range(n)[1:-1]:
             for j in range(n)[1:-1]:
-
                 # not depot nodes in S
                 if i == 0 or j == n - 1 or i == j:
                     continue
