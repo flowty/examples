@@ -1,5 +1,5 @@
 # Vehicle Routing Problem with Time Windows
-from flowty import Model, xsum
+from flowty import Model, xsum, OptimizationStatus
 from fetch_vrptw import fetch
 
 name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R102", 25)
@@ -29,3 +29,10 @@ for i in range(1, n - 1):
     m.addPackingSet([x for x in g.vars if i == x.source])
 
 status = m.optimize()
+
+# get the variable values
+if status == OptimizationStatus.Optimal:
+    for path in m.solutions[0].paths:
+        print(f"Path {path.idx}")
+        for var in path.vars:
+            print(f" {var.name}")
