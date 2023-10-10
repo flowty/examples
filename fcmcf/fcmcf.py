@@ -2,7 +2,7 @@
 import flowty
 from fetch_fcmcf import fetch
 
-name, n, m, k, E, c, u, f, s, t, d = fetch("Canad-C", "c33")
+name, n, m, k, E, c, u, f, s, t, d = fetch("Canad-R", "r01.1")
 
 model = flowty.Model()
 

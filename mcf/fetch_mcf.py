@@ -5,33 +5,37 @@ import shutil
 import tempfile
 
 
-def _download(instance):
+def _download(instance, num):
     instance_lookup = {
         "planar": "planar.tgz",
         "grid": "grid.tgz",
-        "Canad-C": "C.tgz",
-        "Canad-C+": "CPlus.tgz",
-        "Canad-R": "R.tgz",
     }
 
     tmpdir = tempfile.gettempdir()
+    instancename = instance + str(num)
     filename = os.path.join(tmpdir, instance_lookup[instance])
-    if os.path.exists(filename):
-        return
-    url = f"http://groups.di.unipi.it/optimize/Data/MMCF/{instance_lookup[instance]}"
-    headers = {"Accept": "application/zip"}
-    req = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(req) as response:
-        with open(filename, "wb") as out_file:
-            shutil.copyfileobj(response, out_file)
+    if not os.path.exists(filename):
+        url = (
+            f"http://groups.di.unipi.it/optimize/Data/MMCF/{instance_lookup[instance]}"
+        )
+        headers = {"Accept": "application/zip"}
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req) as response:
+            with open(filename, "wb") as out_file:
+                shutil.copyfileobj(response, out_file)
     with tarfile.open(filename, "r") as tf:
-        tf.extractall(tmpdir)
+        for member in tf.getmembers():
+            if member.name == instancename:
+                if not os.path.exists(os.path.join(tmpdir, instancename)):
+                    tf.extract(member, tmpdir)
+                return
+        raise TypeError(f"{num} not in {instance} data set")
 
 
 def _read(instance, num):
     tmpdir = tempfile.gettempdir()
-    name = instance + str(num)
-    filename = os.path.join(tmpdir, name)
+    instancename = instance + str(num)
+    filename = os.path.join(tmpdir, instancename)
     numN = 0
     numE = 0
     numK = 0
@@ -59,9 +63,9 @@ def _read(instance, num):
             s.append(origin - 1)
             t.append(dest - 1)
             d.append(demand)
-    return name, numN, numE, numK, E, c, u, s, t, d
+    return instancename, numN, numE, numK, E, c, u, s, t, d
 
 
 def fetch(instance, num):
-    _download(instance)
+    _download(instance, num)
     return _read(instance, num)
