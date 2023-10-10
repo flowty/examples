@@ -27,58 +27,58 @@ def fetch(collection: str, instance: str, n: int = 100):
         line = next(file)
         line = next(file)
         line = next(file)
-        _, Q = (int(val) for val in line.split())
+        _, q = (int(val) for val in line.split())
 
         line = next(file)
         line = next(file)
         line = next(file)
         line = next(file)
 
-        x: List[int] = []
-        y: List[int] = []
-        d: List[int] = []
-        a: List[int] = []
-        b: List[int] = []
-        s: List[int] = []
+        X: List[int] = []
+        Y: List[int] = []
+        D: List[int] = []
+        A: List[int] = []
+        B: List[int] = []
+        S: List[int] = []
         lines = islice(file, n + 1)
         for line in lines:
             _, xx, yy, dd, aa, bb, ss = (int(val) for val in line.split())
-            x.append(xx)
-            y.append(yy)
-            d.append(dd)
-            a.append(aa)
-            b.append(bb)
-            s.append(ss)
+            X.append(xx)
+            Y.append(yy)
+            D.append(dd)
+            A.append(aa)
+            B.append(bb)
+            S.append(ss)
 
         # Clone depot
-        x.append(x[0])
-        y.append(y[0])
-        d.append(d[0])
-        a.append(a[0])
-        b.append(b[0])
-        s.append(s[0])
+        X.append(X[0])
+        Y.append(Y[0])
+        D.append(D[0])
+        A.append(A[0])
+        B.append(B[0])
+        S.append(S[0])
 
         E: List[Tuple[int, int]] = []
-        c: List[float] = []
-        t: List[float] = []
+        C: List[float] = []
+        T: List[float] = []
         for i in range(n + 2):
             for j in range(n + 2):
                 if j <= i:
                     continue
                 value = (
                     int(
-                        math.sqrt(math.pow(x[i] - x[j], 2) + math.pow(y[i] - y[j], 2))
+                        math.sqrt(math.pow(X[i] - X[j], 2) + math.pow(Y[i] - Y[j], 2))
                         * 10
                     )
                     / 10
                 )
                 if i != n + 1 and j != 0 and not (i == 0 and j == n + 1):
-                    c.append(value)
-                    t.append(value + s[i])
+                    C.append(value)
+                    T.append(value + S[i])
                     E.append((i, j))
                 if j != n + 1 and i != 0:
-                    c.append(value)
-                    t.append(value + s[j])
+                    C.append(value)
+                    T.append(value + S[j])
                     E.append((j, i))
 
-    return name, n + 2, E, c, d, Q, t, a, b, x, y
+    return name, n + 2, E, C, D, q, T, A, B, X, Y

@@ -1,35 +1,12 @@
 # Vehicle Routing Problem with Time Windows
-import sys
-from flowty import Model, xsum, LinExpr
-from fetch_vrptw import fetch
+import flowty
+import fetch_vrptw
 
-name, n, E, c, d, Q, t, a, b, x, y = fetch("Solomon", "R102", 25)
+# solving only with 8 customers...
+name, n, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("Solomon", "R102", 8)
 
-m = Model()
-m.setParam("Algorithm", "MIP")
-
-# Get reduced number of customers from cmd line
-if len(sys.argv) > 1:
-    numCustomer = int(sys.argv[1])
-
-    print(f"Number of customers: {numCustomer}")
-
-    # strip customers
-    old_n = n
-    n = numCustomer + 2
-    data = [
-        ((e[0], e[1]), c[i], t[i])
-        for i, e in enumerate(E)
-        if (e[0] < n - 1 and e[1] < n - 1) or (e[0] < n - 1 and e[1] == old_n - 1)
-    ]
-    E = [e[0] for e in data]
-    E = [e if e[1] != old_n - 1 else (e[0], n - 1) for e in E]
-    c = [e[1] for e in data]
-    t = [e[2] for e in data]
-
-    d = d[: n - 1] + [d[-1]]
-    a = a[: n - 1] + [a[-1]]
-    b = b[: n - 1] + [b[-1]]
+model = flowty.Model()
+model.setParam("Algorithm", "MIP")
 
 # placeholder for added variables
 xs = []
@@ -39,60 +16,69 @@ xs = []
 for k in range(n)[1:-1]:
     # edge variables for this subproblem
     xsk = [
-        m.addVar(lb=0, ub=1, obj=c[i], type="B", name=f"x_({e[0]},{e[1]})_{k}")
+        model.addVar(lb=0, ub=1, obj=C[i], type="B", name=f"x_({e[0]},{e[1]})_{k}")
         for i, e in enumerate(E)
     ]
-    xFeasiblity = m.addVar(lb=0, ub=1, obj=0, type="B", name=f"x_({0},{n-1})_{k}")
+    xFeasiblity = model.addVar(lb=0, ub=1, obj=0, type="B", name=f"x_({0},{n-1})_{k}")
     xs += xsk
 
     # graph, flow constraints
     # sum_(0,j) x_0j = 1
-    expr = LinExpr()
+    expr = flowty.LinExpr()
     [expr.addTerm(1, x) for x, e in zip(xsk, E) if e[0] == 0]
-    m.addConstr(expr + xFeasiblity == 1)
+    model.addConstr(expr + xFeasiblity == 1)
 
     # sum_(j) x_ji - sum_(j) x_ij = 0 , forall i
     for i in range(n)[1:-1]:
-        expr = LinExpr()
+        expr = flowty.LinExpr()
         [expr.addTerm(1, x) for x, e in zip(xsk, E) if e[1] == i]
         [expr.addTerm(-1, x) for x, e in zip(xsk, E) if e[0] == i]
-        m.addConstr(expr == 0)
+        model.addConstr(expr == 0)
         # sum_(j,n-1) x_j,n-1 = 1
 
-    expr = LinExpr()
+    expr = flowty.LinExpr()
     [expr.addTerm(1, x) for x, e in zip(xsk, E) if e[1] == n - 1]
-    m.addConstr(expr + xFeasiblity == 1)
+    model.addConstr(expr + xFeasiblity == 1)
 
     # capacity constraint
     # sum_(ij) d_i * x_ij <= Q
-    m.addConstr(xsum(x * d[e[0]] for x, e in zip(xsk, E)) <= Q)
+    model.addConstr(flowty.xsum(x * D[e[0]] for x, e in zip(xsk, E)) <= q)
 
     # time stamp per vertex
     qt = [
-        m.addVar(lb=0, ub=max(b), obj=0, type="C", name=f"q_t_{i}_{k}")
+        model.addVar(lb=0, ub=max(B), obj=0, type="C", name=f"q_t_{i}_{k}")
         for i in range(n)
     ]
 
     # time winwos
     # q_ik + t_ij - q_jk <= (1 - x_ijk)M , forall (i,j)
     for j, e in enumerate(E):
-        bigM = b[e[0]] + t[j]
-        m.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - t[j])
+        bigM = B[e[0]] + T[j]
+        model.addConstr(qt[e[0]] * 1 - qt[e[1]] * 1 + xsk[j] * bigM <= bigM - T[j])
     # a_i sum_(j) x_ijk <= q_ik
     for i in range(n)[1:-1]:
-        expr = LinExpr()
-        [expr.addTerm(a[i], x) for x, e in zip(xsk, E) if e[0] == i]
-        m.addConstr(expr - qt[i] <= 0)
+        expr = flowty.LinExpr()
+        [expr.addTerm(A[i], x) for x, e in zip(xsk, E) if e[0] == i]
+        model.addConstr(expr - qt[i] <= 0)
     # q_ik <= b_i sum_(j) x_ijk
     for i in range(n)[1:-1]:
-        expr = LinExpr()
-        [expr.addTerm(-b[i], x) for x, e in zip(xsk, E) if e[0] == i]
-        m.addConstr(expr + qt[i] <= 0)
+        expr = flowty.LinExpr()
+        [expr.addTerm(-B[i], x) for x, e in zip(xsk, E) if e[0] == i]
+        model.addConstr(expr + qt[i] <= 0)
 
 # set partition constraints
 for i in range(n)[1:-1]:
-    expr = LinExpr()
+    expr = flowty.LinExpr()
     [expr.addTerm(1, x) for x, e in zip(xs, E * (n - 2)) if e[0] == i]
-    m.addConstr(expr == 1)
+    model.addConstr(expr == 1)
 
-status = m.optimize()
+status = model.optimize()
+
+# get the variable values
+#
+# if (
+#     status == flowty.OptimizationStatus.Optimal
+#     or status == flowty.OptimizationStatus.Feasible
+# ):
+#     for var in model.solutions[0].vars:
+#        print(f" {var.name}")

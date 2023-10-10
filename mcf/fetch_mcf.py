@@ -12,7 +12,6 @@ def _download(instance, num):
     }
 
     tmpdir = tempfile.gettempdir()
-    instancename = instance + str(num)
     filename = os.path.join(tmpdir, instance_lookup[instance])
     if not os.path.exists(filename):
         url = (
@@ -23,10 +22,11 @@ def _download(instance, num):
         with urllib.request.urlopen(req) as response:
             with open(filename, "wb") as out_file:
                 shutil.copyfileobj(response, out_file)
+    instanceName = instance + str(num)
     with tarfile.open(filename, "r") as tf:
         for member in tf.getmembers():
-            if member.name == instancename:
-                if not os.path.exists(os.path.join(tmpdir, instancename)):
+            if member.name == instanceName:
+                if not os.path.exists(os.path.join(tmpdir, instanceName)):
                     tf.extract(member, tmpdir)
                 return
         raise TypeError(f"{num} not in {instance} data set")
@@ -34,36 +34,36 @@ def _download(instance, num):
 
 def _read(instance, num):
     tmpdir = tempfile.gettempdir()
-    instancename = instance + str(num)
-    filename = os.path.join(tmpdir, instancename)
-    numN = 0
-    numE = 0
-    numK = 0
+    instanceName = instance + str(num)
+    filename = os.path.join(tmpdir, instanceName)
+    n = 0
+    m = 0
+    k = 0
     E = []
-    c = []
-    u = []
-    s = []
-    t = []
-    d = []
+    C = []
+    U = []
+    O = []
+    D = []
+    B = []
     with open(filename, "r") as f:
-        numN = int(f.readline())
-        numE = int(f.readline())
-        numK = int(f.readline())
-        for _ in range(numE):
+        n = int(f.readline())
+        m = int(f.readline())
+        k = int(f.readline())
+        for _ in range(m):
             source, target, cost, capacity = [
                 int(w) for w in f.readline().split(" ") if w.strip()
             ]
             E.append((source - 1, target - 1))
-            c.append(cost)
-            u.append(capacity)
-        for _ in range(numK):
+            C.append(cost)
+            U.append(capacity)
+        for _ in range(k):
             origin, dest, demand = [
                 int(w) for w in f.readline().split(" ") if w.strip()
             ]
-            s.append(origin - 1)
-            t.append(dest - 1)
-            d.append(demand)
-    return instancename, numN, numE, numK, E, c, u, s, t, d
+            O.append(origin - 1)
+            D.append(dest - 1)
+            B.append(demand)
+    return instanceName, n, m, k, E, C, U, O, D, B
 
 
 def fetch(instance, num):
