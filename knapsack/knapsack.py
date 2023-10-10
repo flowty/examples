@@ -29,5 +29,7 @@ status = model.optimize()
 #     status == flowty.OptimizationStatus.Optimal
 #     or status == flowty.OptimizationStatus.Feasible
 # ):
-#     for var in model.solutions[0].vars:
-#        print(f" {var.name}")
+#     for path in model.solutions[0].paths:
+#         print(f"Path {path.idx}")
+#         for var in path.vars:
+#             print(f" {var.name}")
