@@ -2,8 +2,8 @@
 import flowty
 import fetch_vrptw
 
-# solving only with 8 customers...
-name, n, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("Solomon", "R102", 8)
+# solving only with 5 customers...
+name, n, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("Solomon", "R102", 5)
 
 model = flowty.Model()
 model.setParam("Algorithm", "MIP")
