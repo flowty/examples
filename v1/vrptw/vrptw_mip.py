@@ -1,9 +1,17 @@
 # Vehicle Routing Problem with Time Windows
 import flowty
+import sys
+
+sys.path.insert(1, "./v2/vrptw")
 import fetch_vrptw
 
-# solving only with 5 customers...
-name, n, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("Solomon", "R102", 5)
+# from
+# http://vrp.galgos.inf.puc-rio.br
+# https://github.com/flowty/data/tree/main/data/vrptw
+#
+# C101...109, R101...112, RC101...108
+# C201...208, R201...211, RC201...208
+name, n, m, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("C101_25")
 
 model = flowty.Model()
 model.setParam("Algorithm", "MIP")
@@ -12,7 +20,7 @@ model.setParam("Algorithm", "MIP")
 xs = []
 
 # construct a 3-index model
-# add varaibles and constraints for each subproblem
+# add variables and constraints for each subproblem
 for k in range(n)[1:-1]:
     # edge variables for this subproblem
     xsk = [
@@ -75,10 +83,10 @@ for i in range(n)[1:-1]:
 status = model.optimize()
 
 # get the variable values
-#
-# if (
-#     status == flowty.OptimizationStatus.Optimal
-#     or status == flowty.OptimizationStatus.Feasible
-# ):
-#     for var in model.solutions[0].vars:
-#        print(f" {var.name}")
+if (
+    status == flowty.OptimizationStatus.Optimal
+    or status == flowty.OptimizationStatus.Feasible
+):
+    print(f"Cost: {model.objectiveValue}")
+    # for var in model.solutions[0].vars:
+    #     print(f" {var.name}")

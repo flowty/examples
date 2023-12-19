@@ -23,13 +23,12 @@ model.addResourceDisposable(
 
 status = model.optimize()
 
-# get the variable values
-#
-# if (
-#     status == flowty.OptimizationStatus.Optimal
-#     or status == flowty.OptimizationStatus.Feasible
-# ):
-#     for path in model.solutions[0].paths:
-#         print(f"Path {path.idx}")
-#         for var in path.vars:
-#             print(f" {var.name}")
+if (
+    status == flowty.OptimizationStatus.Optimal
+    or status == flowty.OptimizationStatus.Feasible
+):
+    print(f"Cost: {model.objectiveValue}")
+    # for path in model.solutions[0].paths:
+    #     print(f"Path {path.idx}")
+    #     for var in path.vars:
+    #         print(f" {var.name}")
