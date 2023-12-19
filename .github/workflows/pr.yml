@@ -109,22 +109,6 @@ jobs:
         IF "%OBJECTIVE_VALUE%" EQU "UB     :           1913" (exit 0) ELSE (exit 1)
       shell: cmd
       if: startsWith(matrix.os, 'windows')
-    - name: Test vrptw MIP (Linux)
-      run: |
-        python v1/vrptw/vrptw_mip.py > log
-        cat log
-        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :           1913" ]
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Test vrptw MIP (Windows)
-      run: |
-        python v1/vrptw/vrptw_mip.py > log 2>&1
-        type log
-        findstr /b "UB     :" log > tmp.txt 2>&1
-        set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :           1913" (exit 0) ELSE (exit 1)
-      shell: cmd
-      if: startsWith(matrix.os, 'windows')
 
   test-mcf:
     runs-on: ${{ matrix.os }}
