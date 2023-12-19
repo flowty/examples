@@ -19,10 +19,10 @@ jobs:
         pip install black flake8
     - name: Flake8
       run: |
-        flake8 **/*py
+        flake8 v2/**/*py
     - name: Black
       run: |
-        black --check **/*py
+        black --check **/**/*py
 
   test-knapsack:
     runs-on: ${{ matrix.os }}
