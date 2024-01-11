@@ -8,7 +8,7 @@ import fetch_mcf
 #
 # grid{i}, i in [1,...,15]
 # planar{i}, i in [30, 50, 80, 100, 150, 300, 500, 800, 1000, 2500]
-name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch("planar800")
+name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch("planar500")
 
 model = flowty.Model()
 
@@ -31,19 +31,17 @@ for y, s, b in zip(Y, subproblems, B):
     model += y + s >= b
 
 # capacity constraints
-lazy = True
+lazy = False
 for e, u in zip(graph.edges, U):
     model += e <= u, lazy
 
 status = model.solve()
-print(f"Status {status}")
-
 solution = model.getSolution()
-if solution:
-    print(f"Cost {(solution.cost)}")
-    # for path in solution.paths:
-    #     print(f"Commodity {path.subproblem.id}: {path.x}")
-    #     for edge in path.edges:
-    #         print(f"{edge}")
-    # for var in solution.variables:
-    #     print(f"Penalty {var.variable.id}: {var.x}")
+# if solution:
+#     print(f"Cost {(solution.cost)}")
+#     for path in solution.paths:
+#         print(f"Commodity {path.subproblem.id}: {path.x}")
+#         for edge in path.edges:
+#             print(f"{edge}")
+#     for var in solution.variables:
+#         print(f"Penalty {var.variable.id}: {var.x}")
