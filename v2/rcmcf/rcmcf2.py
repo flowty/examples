@@ -8,7 +8,7 @@ import fetch_rcmcf
 # https://github.com/flowty/data/tree/main/data/linerlib
 #
 # Baltic ...
-name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("Med_base_best")
+name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
 
 model = flowty.Model()
 
@@ -36,12 +36,10 @@ for u, *edges in zip(U, *[s.graph.edges for s in subproblems]):
         model += flowty.sum(edges) <= u, lazy
 
 status = model.solve()
-print(f"Status {status}")
-
 solution = model.getSolution()
 if solution:
     print(f"Cost {constant + solution.cost}")
-    # for path in solution.paths:
-    #     print(f"Commodity {path.subproblem.id}: {path.x}")
-    #     for edge in path.edges:
-    #         print(f"{edge}")
+#     for path in solution.paths:
+#         print(f"Commodity {path.subproblem.id}: {path.x}")
+#         for edge in path.edges:
+#             print(f"{edge}")

@@ -25,12 +25,10 @@ for v in graph.vertices[1 : n - 1]:
     model += v == 1
 
 status = model.solve()
-print(f"Status {status}")
-
 solution = model.getSolution()
-if solution:
-    print(f"Cost {solution.cost}")
-    # for path in solution.paths:
-    #     print(f"Path {path.subproblem.id}: {path.x}")
-    #     for edge in path.edges:
-    #         print(f"{edge}")
+# if solution:
+#     print(f"Cost {solution.cost}")
+#     for path in solution.paths:
+#         print(f"Path {path.subproblem.id}: {path.x}")
+#         for edge in path.edges:
+#             print(f"{edge}")
