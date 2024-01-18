@@ -14,7 +14,7 @@ model = flowty.Model()
 
 # one graph with time and load resources, it is identical for all vehicles
 time = "E", T, "V", A, B
-capacity = "V", D, "G", 0, q
+capacity = "V", D, "G", q
 graph = model.addGraph(costs=C, edges=E, resources=[time, capacity])
 subproblem = model.addSubproblem(
     graph, source=0, target=n - 1, obj=0, lb=1, ub=n - 2, domain="B"
