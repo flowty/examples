@@ -16,7 +16,7 @@ model = flowty.Model()
 graph = model.addGraph(costs=C, edges=E)
 
 # create subproblems
-subproblems = [
+S = [
     model.addSubproblem(graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C")
     for o, d, b in zip(O, D, B)
 ]
@@ -27,7 +27,7 @@ penalty = sum(C) + 1
 Y = [model.addVariable(obj=penalty, lb=0, ub=b, domain="C") for b in B]
 
 # demand constraints
-for y, s, b in zip(Y, subproblems, B):
+for y, s, b in zip(Y, S, B):
     model += y + s >= b
 
 # capacity constraints
