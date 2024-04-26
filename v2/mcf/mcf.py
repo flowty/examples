@@ -27,8 +27,8 @@ penalty = sum(C) + 1
 Y = [model.addVariable(obj=penalty, lb=0, ub=b, domain="C") for b in B]
 
 # demand constraints
-for y, s, b in zip(Y, S, B):
-    model += y + s >= b
+for s, y, b in zip(S, Y, B):
+    model += s + y >= b
 
 # capacity constraints
 lazy = False
