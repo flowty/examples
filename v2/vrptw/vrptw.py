@@ -24,6 +24,8 @@ subproblem = model.addSubproblem(
 for v in graph.vertices[1 : n - 1]:
     model += v == 1
 
+model.setParam("Master_Cut_UseSubsetRow", True)
+
 status = model.solve()
 solution = model.getSolution()
 # if solution:

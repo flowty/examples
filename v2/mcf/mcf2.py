@@ -33,6 +33,9 @@ lazy = True
 for e, u in zip(graph.edges, U):
     model += e <= u, lazy
 
+model.setParam("Pricer_MaxNumPricings", 1024 * 20)
+model.setParam("Pricer_MaxNumVars", 1000 * 20)
+
 status = model.solve()
 solution = model.getSolution()
 if solution:
