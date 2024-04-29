@@ -41,14 +41,14 @@ for b, s in zip(B, S):
 
 status = model.solve()
 solution = model.getSolution()
-if solution:
-    print(f"Cost {(solution.cost)}")
-    for path in solution.paths:
-        print(f"Commodity {path.subproblem.id}: {path.x}")
-        for edge in path.edges:
-            print(f"{edge}")
-    for var in solution.variables:
-        if var.variable.id < len(Z):
-            print(f"Penalty {var.variable.id}: {var.x}")
-        else:
-            print(f"Design {var.variable.id - len(Z)}: {var.x}")
+# if solution:
+#     print(f"Cost {(solution.cost)}")
+#     for path in solution.paths:
+#         print(f"Commodity {path.subproblem.id}: {path.x}")
+#         for edge in path.edges:
+#             print(f"{edge}")
+#     for var in solution.variables:
+#         if var.variable.id < len(Z):
+#             print(f"Penalty {var.variable.id}: {var.x}")
+#         else:
+#             print(f"Design {var.variable.id - len(Z)}: {var.x}")
