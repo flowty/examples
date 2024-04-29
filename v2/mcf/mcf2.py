@@ -11,6 +11,8 @@ import fetch_mcf
 name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch("planar500")
 
 model = flowty.Model()
+model.setParam("Pricer_MaxNumPricings", 1024 * 20)
+model.setParam("Pricer_MaxNumVars", 1000 * 20)
 
 # define graph
 graph = model.addGraph(costs=C, edges=E)
@@ -32,9 +34,6 @@ for s, b in zip(subproblems, B):
 lazy = True
 for e, u in zip(graph.edges, U):
     model += e <= u, lazy
-
-model.setParam("Pricer_MaxNumPricings", 1024 * 20)
-model.setParam("Pricer_MaxNumVars", 1000 * 20)
 
 status = model.solve()
 solution = model.getSolution()

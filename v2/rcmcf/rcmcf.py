@@ -11,6 +11,7 @@ import fetch_rcmcf
 name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
 
 model = flowty.Model()
+model.setParam("Pricer_MultiThreading", False)
 
 # create subproblems
 subproblems = []

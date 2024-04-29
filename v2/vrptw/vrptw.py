@@ -11,6 +11,7 @@ import fetch_vrptw
 name, n, m, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("C101_25")
 
 model = flowty.Model()
+model.setParam("Master_Cut_UseSubsetRow", True)
 
 # one graph with time and load resources, it is identical for all vehicles
 time = "E", T, "V", A, B
@@ -23,8 +24,6 @@ subproblem = model.addSubproblem(
 # set partition constriants
 for v in graph.vertices[1 : n - 1]:
     model += v == 1
-
-model.setParam("Master_Cut_UseSubsetRow", True)
 
 status = model.solve()
 solution = model.getSolution()
