@@ -15,7 +15,7 @@ model.setParam("Pricer_MaxNumPricings", 1024 * 20)
 model.setParam("Pricer_MaxNumVars", 1000 * 20)
 
 # define graph
-graph = model.addGraph(costs=C, edges=E)
+graph = model.addGraph(edges=E, edgeCosts=C)
 
 penalty = sum(C) + 1
 constant = sum(B) * penalty

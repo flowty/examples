@@ -16,7 +16,7 @@ model.setParam("Master_Cut_UseSubsetRow", True)
 # one graph with time and load resources, it is identical for all vehicles
 time = "E", T, "V", A, B
 capacity = "V", D, "G", q
-graph = model.addGraph(costs=C, edges=E, resources=[time, capacity], pathSense="S")
+graph = model.addGraph(edges=E, edgeCosts=C, resources=[time, capacity], pathSense="S")
 subproblem = model.addSubproblem(
     graph, source=0, target=n - 1, obj=0, lb=1, ub=n - 2, domain="B"
 )

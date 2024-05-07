@@ -8,7 +8,7 @@ import fetch_rcmcf
 # https://github.com/flowty/data/tree/main/data/linerlib
 #
 # Baltic ...
-name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
+name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("Baltic-All-10")
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
@@ -18,7 +18,7 @@ penalty = sum(C) + 1
 constant = sum(B) * penalty
 subproblems = []
 for o, d, b, r in zip(O, D, B, R):
-    graph = model.addGraph(costs=C, edges=E, resources=[("E", T, "G", r)])
+    graph = model.addGraph(edges=E, edgeCosts=C, resources=[("E", T, "G", r)])
     subproblems.append(
         model.addSubproblem(
             graph, source=o, target=d, obj=-penalty, lb=0, ub=b, domain="C"
