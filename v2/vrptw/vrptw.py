@@ -8,7 +8,7 @@ import fetch_vrptw
 #
 # C101...109, R101...112, RC101...108
 # C201...208, R201...211, RC201...208
-name, n, m, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("C101_100")
+name, n, m, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch("C101")
 
 model = flowty.Model()
 model.setParam("Master_Cut_UseSubsetRow", True)
