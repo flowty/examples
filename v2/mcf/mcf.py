@@ -33,7 +33,7 @@ for s, y, b in zip(S, Y, B):
     model += s + y >= b
 
 # capacity constraints
-lazy = False
+lazy = True
 for e, u in zip(graph.edges, U):
     model += e <= u, lazy
 
