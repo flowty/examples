@@ -1,4 +1,6 @@
+import gzip
 import os
+import io
 import urllib.request
 import shutil
 import tempfile
@@ -6,10 +8,10 @@ import tempfile
 
 def _download(instance):
     tmpdir = tempfile.gettempdir()
-    instanceName = instance + ".txt"
+    instanceName = instance + ".txt.gz"
     filename = os.path.join(tmpdir, instanceName)
     if not os.path.exists(filename):
-        url = f"https://raw.github.com/flowty/data/master/data/mcf/{instanceName}"
+        url = f"https://github.com/flowty/data/releases/download/MCF_v1.0.0/{instanceName}"
         headers = {"Accept": "application/txt"}
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req) as response:
@@ -27,14 +29,14 @@ def _getNextLine(file):
 def _read(instance):
     tmpdir = tempfile.gettempdir()
     print(os.getcwd())
-    filename = os.path.join(tmpdir, instance + ".txt")
+    filename = os.path.join(tmpdir, instance + ".txt.gz")
     E = []
     C = []
     U = []
     O = []
     D = []
     B = []
-    with open(filename, "r") as file:
+    with io.TextIOWrapper(gzip.open(filename, "rb"), encoding="utf-8") as file:
         line = _getNextLine(file)
         n, m, k = [int(i) for i in line[2:].split()[1:]]
         for _ in range(k):

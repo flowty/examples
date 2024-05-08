@@ -4,7 +4,7 @@ import fetch_fcmcf
 
 # From
 # http://groups.di.unipi.it/optimize/Data/MMCF.html#Canad
-# https://github.com/flowty/data/tree/main/data/fcmcf
+# https://github.com/flowty/data/releases/download/FCMCF_v1.0.0
 name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch("c33")
 
 model = flowty.Model()

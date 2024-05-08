@@ -4,7 +4,7 @@ import fetch_vrptw
 
 # from
 # http://vrp.galgos.inf.puc-rio.br
-# https://github.com/flowty/data/tree/main/data/vrptw
+# https://github.com/flowty/data/releases/download/VRPTW_v1.0.0
 #
 # C101...109, R101...112, RC101...108
 # C201...208, R201...211, RC201...208

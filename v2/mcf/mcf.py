@@ -4,7 +4,7 @@ import fetch_mcf
 
 # from
 # https://commalab.di.unipi.it/datasets/mmcf/#Plnr
-# https://github.com/flowty/data/tree/main/data/mcf
+# https://github.com/flowty/data/releases/download/MCF_v1.0.0
 #
 # grid{i}, i in [1,...,15]
 # planar{i}, i in [30, 50, 80, 100, 150, 300, 500, 800, 1000, 2500]
