@@ -11,7 +11,7 @@ def _download(instance):
     instanceName = instance + ".txt.gz"
     filename = os.path.join(tmpdir, instanceName)
     if not os.path.exists(filename):
-        url = f"https://github.com/flowty/data/releases/download/RCMCF_v1.0.0/{instanceName}"
+        url = f"https://github.com/flowty/data/releases/download/RCMCF/{instanceName}"
         headers = {"Accept": "application/txt"}
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req) as response:
