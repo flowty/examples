@@ -12,7 +12,7 @@ model = flowty.Model()
 # create subproblems
 S = []
 for o, d, b in zip(O, D, B):
-    graph = model.addGraph(costs=C, edges=E)
+    graph = model.addGraph(edges=E, edgeCosts=C)
     S.append(
         model.addSubproblem(graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C")
     )

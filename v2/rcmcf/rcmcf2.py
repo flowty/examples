@@ -18,7 +18,7 @@ penalty = sum(C) + 1
 constant = sum(B) * penalty
 subproblems = []
 for o, d, b, r in zip(O, D, B, R):
-    graph = model.addGraph(costs=C, edges=E, resources=[("E", T, "G", r)])
+    graph = model.addGraph(edges=E, edgeCosts=C, resources=[("E", T, "G", r)])
     subproblems.append(
         model.addSubproblem(
             graph, source=o, target=d, obj=-penalty, lb=0, ub=b, domain="C"
