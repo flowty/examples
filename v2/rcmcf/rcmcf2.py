@@ -8,7 +8,7 @@ import fetch_rcmcf
 # https://github.com/flowty/data/tree/main/data/linerlib
 #
 # Baltic ...
-name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("Baltic-All-10")
+name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
