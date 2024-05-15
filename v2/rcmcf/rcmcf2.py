@@ -12,6 +12,11 @@ name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
+model.setParam("Pricer_MaxNumPricings", 1024 * 20)
+model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("Pricer_Algorithm", 2)
+model.setParam("pricer_HeuristicLowFilter", 0)
+model.setParam("pricer_HeuristicHighFilter", 0)
 
 # create subproblems
 penalty = sum(C) + 1

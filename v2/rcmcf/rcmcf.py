@@ -1,15 +1,26 @@
 # Resource Constrained Multi Commodity Flow
 import flowty
 import fetch_rcmcf
+import sys
+
+if len(sys.argv) == 2 and sys.argv[1] == "--help":
+    print("Usage: python rcmcf.py instanceName [logFilepath] [timeLimit]")
+    sys.exit(1)
 
 # from
 # https://github.com/flowty/LINERLIB
 # https://github.com/flowty/flow-first-route-next-heuristic-shipping-network-design
 # https://github.com/flowty/data/releases/download/RCMCF
-name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch("WorldLarge-All-5")
+instance = "WorldLarge-All-5" if len(sys.argv) == 1 else sys.argv[1]
+name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch(instance)
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
+model.setParam("Pricer_MaxNumPricings", 1024 * 20)
+model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("Pricer_Algorithm", 2)
+model.setParam("pricer_HeuristicLowFilter", 0)
+model.setParam("pricer_HeuristicHighFilter", 0)
 
 # create subproblems
 subproblems = []
@@ -34,10 +45,15 @@ for u, *edges in zip(U, *[s.graph.edges for s in subproblems]):
     if u < maxCapacity:
         model += flowty.sum(edges) <= u, lazy
 
+if len(sys.argv) > 2:
+    model.setParam("LogFilepath", sys.argv[2])
+if len(sys.argv) > 3:
+    model.setParam("TimeLimit", int(sys.argv[3]))
+
 status = model.solve()
 solution = model.getSolution()
-# if solution:
-#     print(f"Cost {solution.cost}")
+if solution:
+    print(f"Cost {round(solution.cost, 1)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:

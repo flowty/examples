@@ -1,11 +1,17 @@
 # Fixed Charge Multi Commodity Flow
 import flowty
 import fetch_fcmcf
+import sys
+
+if len(sys.argv) == 2 and sys.argv[1] == "--help":
+    print("Usage: python fcmcf.py instanceName [logFile] [timeLimit]")
+    sys.exit(1)
 
 # From
 # http://groups.di.unipi.it/optimize/Data/MMCF.html#Canad
 # https://github.com/flowty/data/releases/download/FCMCF
-name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch("c33")
+instance = "c33" if len(sys.argv) == 1 else sys.argv[1]
+name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch(instance)
 
 model = flowty.Model()
 
@@ -39,10 +45,15 @@ for b, s in zip(B, S):
     for e, y in zip(s.graph.edges, Y):
         model += e <= b * y, lazy
 
+if len(sys.argv) > 2:
+    model.setParam("LogFilepath", sys.argv[2])
+if len(sys.argv) > 3:
+    model.setParam("TimeLimit", int(sys.argv[3]))
+
 status = model.solve()
 solution = model.getSolution()
-# if solution:
-#     print(f"Cost {(solution.cost)}")
+if solution:
+    print(f"Cost {round(solution.cost,1)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:
