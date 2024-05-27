@@ -19,6 +19,7 @@ name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch(instance)
 model = flowty.Model()
 model.setParam("Pricer_MaxNumPricings", 1024 * 20)
 model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("MIPGap", 0)
 
 # define graph
 graph = model.addGraph(edges=E, edgeCosts=C)
@@ -51,7 +52,7 @@ if len(sys.argv) > 3:
 status = model.solve()
 solution = model.getSolution()
 if solution:
-    print(f"Cost {round(solution.cost,1)}")
+    print(f"Cost {round(solution.cost, 1)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:

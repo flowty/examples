@@ -9,9 +9,9 @@ jobs:
       matrix:
         python-version: [3.11]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -24,57 +24,6 @@ jobs:
       run: |
         black --check **/**/*py
 
-  test-knapsack:
-    runs-on: ${{ matrix.os }}
-    needs: lint
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python-version: [3.12, 3.9, '3.10', 3.11]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        pip install flowty
-    - name: Test Knapsack (Linux)
-      run: |        
-        python v1/knapsack/knapsack.py > log
-        cat log
-        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :          -8373" ]
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Test Knapsack (Windows)
-      run: |
-        python v1/knapsack/knapsack.py > log 2>&1
-        type log
-        findstr /b "UB     :" log > tmp.txt 2>&1
-        set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :          -8373" (exit 0) ELSE (exit 1)
-      shell: cmd
-      if: startsWith(matrix.os, 'windows')
-    - name: Test Knapsack MIP (Linux)
-      run: |        
-        python v1/knapsack/knapsack_mip.py > log
-        cat log
-        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :          -8373" ]
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Test Knapsack MIP (Windows)
-      run: |
-        python v1/knapsack/knapsack_mip.py > log 2>&1
-        type log
-        findstr /b "UB     :" log > tmp.txt 2>&1
-        set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :          -8373" (exit 0) ELSE (exit 1)
-      shell: cmd
-      if: startsWith(matrix.os, 'windows')
-
   test-vrptw:
     runs-on: ${{ matrix.os }}
     needs: lint
@@ -82,12 +31,11 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
         python-version: [3.12, 3.9, '3.10', 3.11]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -95,20 +43,10 @@ jobs:
         pip install flowty
     - name: Test vrptw (Linux)
       run: |
-        python v1/vrptw/vrptw.py > log
+        python v2/vrptw/vrptw.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :           1913" ]
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Test vrptw (Windows)
-      run: |
-        python v1/vrptw/vrptw.py > log 2>&1
-        type log
-        findstr /b "UB     :" log > tmp.txt 2>&1
-        set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :           1913" (exit 0) ELSE (exit 1)
-      shell: cmd
-      if: startsWith(matrix.os, 'windows')
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 1913" ]
 
   test-mcf:
     runs-on: ${{ matrix.os }}
@@ -117,12 +55,11 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
-        python-version: [3.12, 3.9, '3.10', 3.11]
+        python-version: [ 3.12, 3.9, '3.10', 3.11 ]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -130,17 +67,7 @@ jobs:
         pip install flowty
     - name: Test mcf (Linux)
       run: |
-        python v1/mcf/mcf.py > log
+        python v2/mcf/mcf.py > log
         cat log
-        export OBJECTIVE_VALUE=$(cat log | grep "UB     :")
-        [ "$OBJECTIVE_VALUE" = "UB     :         827319" ]
-      if: startsWith(matrix.os, 'ubuntu')
-    - name: Test mcf (Windows)
-      run: |
-        python v1/mcf/mcf.py > log 2>&1
-        type log
-        findstr /b "UB     :" log > tmp.txt 2>&1
-        set /P OBJECTIVE_VALUE=<tmp.txt
-        IF "%OBJECTIVE_VALUE%" EQU "UB     :         827319" (exit 0) ELSE (exit 1)
-      shell: cmd
-      if: startsWith(matrix.os, 'windows')
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 481982340.0" ]

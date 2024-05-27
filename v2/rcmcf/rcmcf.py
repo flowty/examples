@@ -21,6 +21,7 @@ model.setParam("Pricer_MaxNumCols", 1000 * 20)
 model.setParam("Pricer_Algorithm", 2)
 model.setParam("pricer_HeuristicLowFilter", 0)
 model.setParam("pricer_HeuristicHighFilter", 0)
+model.setParam("MIPGap", 0)
 
 # create subproblems
 subproblems = []

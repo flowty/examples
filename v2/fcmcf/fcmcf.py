@@ -14,6 +14,7 @@ instance = "c33" if len(sys.argv) == 1 else sys.argv[1]
 name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch(instance)
 
 model = flowty.Model()
+model.setParam("MIPGap", 0)
 
 # create subproblems
 S = []
@@ -53,7 +54,7 @@ if len(sys.argv) > 3:
 status = model.solve()
 solution = model.getSolution()
 if solution:
-    print(f"Cost {round(solution.cost,1)}")
+    print(f"Cost {round(solution.cost)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:

@@ -13,6 +13,7 @@ name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch("planar500")
 model = flowty.Model()
 model.setParam("Pricer_MaxNumPricings", 1024 * 20)
 model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("MIPGap", 0)
 
 # define graph
 graph = model.addGraph(edges=E, edgeCosts=C)
@@ -38,7 +39,7 @@ for e, u in zip(graph.edges, U):
 status = model.solve()
 solution = model.getSolution()
 if solution:
-    print(f"Cost {(constant + solution.cost)}")
+    print(f"Cost {round(constant + solution.cost, 1)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:

@@ -19,6 +19,7 @@ name, n, m, E, C, D, q, T, A, B, X, Y = fetch_vrptw.fetch(instance)
 model = flowty.Model()
 model.setParam("Master_Cut_UseSubsetRow", True)
 model.setParam("PrimalHeu_DiveFrequency", 0)
+model.setParam("MIPGap", 0)
 
 # one graph with time and load resources, it is identical for all vehicles
 time = "E", T, "V", A, B
