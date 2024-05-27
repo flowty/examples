@@ -1,6 +1,11 @@
 # Multi Commodity Flow
 import flowty
 import fetch_mcf
+import sys
+
+if len(sys.argv) == 2 and sys.argv[1] == "--help":
+    print("Usage: python mcf.py instanceName [logFile] [timeLimit]")
+    sys.exit(1)
 
 # from
 # https://commalab.di.unipi.it/datasets/mmcf/#Plnr
@@ -8,11 +13,13 @@ import fetch_mcf
 #
 # grid{i}, i in [1,...,15]
 # planar{i}, i in [30, 50, 80, 100, 150, 300, 500, 800, 1000, 2500]
-name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch("planar500")
+instance = "planar500" if len(sys.argv) == 1 else sys.argv[1]
+name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch(instance)
 
 model = flowty.Model()
 model.setParam("Pricer_MaxNumPricings", 1024 * 20)
 model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("MIPGap", 0)
 
 # define graph
 graph = model.addGraph(edges=E, edgeCosts=C)
@@ -37,10 +44,15 @@ lazy = True
 for e, u in zip(graph.edges, U):
     model += e <= u, lazy
 
+if len(sys.argv) > 2:
+    model.setParam("LogFilepath", sys.argv[2])
+if len(sys.argv) > 3:
+    model.setParam("TimeLimit", int(sys.argv[3]))
+
 status = model.solve()
 solution = model.getSolution()
-# if solution:
-#     print(f"Cost {(solution.cost)}")
+if solution:
+    print(f"Cost {round(solution.cost, 1)}")
 #     for path in solution.paths:
 #         print(f"Commodity {path.subproblem.id}: {path.x}")
 #         for edge in path.edges:
