@@ -14,6 +14,7 @@ instance = "c33" if len(sys.argv) == 1 else sys.argv[1]
 name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch(instance)
 
 model = flowty.Model()
+model.setParam("Pricer_MaxNumCols", k)
 model.setParam("MIPGap", 0)
 
 # create subproblems
@@ -36,9 +37,8 @@ for s, b, z in zip(S, B, Z):
     model += s + z >= b
 
 # capacity constraints
-lazy = True
 for u, *edges, y in zip(U, *[s.graph.edges for s in S], Y):
-    model += flowty.sum(edges) <= u * y, lazy
+    model += flowty.sum(edges) <= u * y
 
 # strong linking
 lazy = True

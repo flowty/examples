@@ -16,12 +16,11 @@ name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch(instance)
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
-model.setParam("Pricer_MaxNumPricings", 1024 * 20)
-model.setParam("Pricer_MaxNumCols", 1000 * 20)
+model.setParam("Pricer_MaxNumCols", k * 1000)
+model.setParam("Pricer_UseSparseStorage", True)
 model.setParam("Pricer_Algorithm", 2)
 model.setParam("pricer_HeuristicLowFilter", 0)
 model.setParam("pricer_HeuristicHighFilter", 0)
-model.setParam("MIPGap", 0)
 
 # create subproblems
 subproblems = []
