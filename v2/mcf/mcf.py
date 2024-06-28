@@ -17,9 +17,8 @@ instance = "planar500" if len(sys.argv) == 1 else sys.argv[1]
 name, n, m, k, E, C, U, O, D, B = fetch_mcf.fetch(instance)
 
 model = flowty.Model()
-model.setParam("Pricer_MaxNumPricings", 1024 * 20)
-model.setParam("Pricer_MaxNumCols", 1000 * 20)
-model.setParam("MIPGap", 0)
+model.setParam("Pricer_MaxNumCols", k)
+model.setParam("Master_MinColInactivity", 2)
 
 # define graph
 graph = model.addGraph(edges=E, edgeCosts=C)
