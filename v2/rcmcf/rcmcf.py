@@ -10,7 +10,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--help":
 # from
 # https://github.com/flowty/LINERLIB
 # https://github.com/flowty/flow-first-route-next-heuristic-shipping-network-design
-# https://github.com/flowty/data/releases/download/RCMCF
+# https://github.com/flowty/data/releases/tag/RCMCF
 instance = "WorldLarge-All-5" if len(sys.argv) == 1 else sys.argv[1]
 name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch(instance)
 

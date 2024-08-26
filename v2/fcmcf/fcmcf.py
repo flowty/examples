@@ -9,7 +9,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--help":
 
 # From
 # http://groups.di.unipi.it/optimize/Data/MMCF.html#Canad
-# https://github.com/flowty/data/releases/download/FCMCF
+# https://github.com/flowty/data/releases/tag/FCMCF
 instance = "c33" if len(sys.argv) == 1 else sys.argv[1]
 name, n, m, k, E, C, U, F, O, D, B = fetch_fcmcf.fetch(instance)
 

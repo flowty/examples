@@ -9,7 +9,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--help":
 
 # from
 # http://vrp.galgos.inf.puc-rio.br
-# https://github.com/flowty/data/releases/download/VRPTW
+# https://github.com/flowty/data/releases/tag/VRPTW
 #
 # C101...109, R101...112, RC101...108
 # C201...208, R201...211, RC201...208
@@ -22,11 +22,15 @@ model.setParam("PrimalHeu_DiveFrequency", 0)
 model.setParam("MIPGap", 0)
 
 # one graph with time and load resources, it is identical for all vehicles
-time = "E", T, "V", A, B
-capacity = "V", D, "G", q
-graph = model.addGraph(edges=E, edgeCosts=C, resources=[time, capacity], pathSense="S")
+time = {"E": [T], "V": [A, B]}, "time"
+load = {"V": [D], "G": [q]}, "load"
+timeRule = "Window", ["time"]
+loadRule = "Capacity", ["load"]
+rules = [timeRule, loadRule]
+
+graph = model.addGraph(edges=E, edgeCosts=C, resources=[time, load], pathSense="S")
 subproblem = model.addSubproblem(
-    graph, source=0, target=n - 1, obj=0, lb=1, ub=n - 2, domain="B"
+    graph, source=0, target=n - 1, obj=0, lb=1, ub=n - 2, domain="B", rules=rules
 )
 
 # set partition constriants

@@ -28,7 +28,6 @@ def _getNextLine(file):
 
 def _read(instance):
     tmpdir = tempfile.gettempdir()
-    print(os.getcwd())
     filename = os.path.join(tmpdir, instance + ".txt.gz")
     E = []
     C = []
