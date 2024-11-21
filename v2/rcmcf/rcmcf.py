@@ -26,10 +26,12 @@ subproblems = []
 for o, d, b, r in zip(O, D, B, R):
     resource = {"E": [T], "G": [r]}, "time"
     resourceRule = "Capacity", ["load"]
-    rules = [resourceRule]    
+    rules = [resourceRule]
     graph = model.addGraph(edges=E, edgeCosts=C, resources=[resource])
     subproblems.append(
-        model.addSubproblem(graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C", rules=rules)
+        model.addSubproblem(
+            graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C", rules=rules
+        )
     )
 
 # create penalty variables
