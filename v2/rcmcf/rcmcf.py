@@ -16,8 +16,7 @@ name, n, m, k, E, C, U, O, D, B, R, T = fetch_rcmcf.fetch(instance)
 
 model = flowty.Model()
 model.setParam("Pricer_MultiThreading", False)
-model.setParam("Pricer_MaxNumCols", k * 1000)
-model.setParam("Pricer_UseSparseStorage", True)
+model.setParam("Pricer_MaxNumCols", k)
 model.setParam("Pricer_Algorithm", 2)
 model.setParam("pricer_HeuristicLowFilter", 0)
 model.setParam("pricer_HeuristicHighFilter", 0)
@@ -25,9 +24,12 @@ model.setParam("pricer_HeuristicHighFilter", 0)
 # create subproblems
 subproblems = []
 for o, d, b, r in zip(O, D, B, R):
-    graph = model.addGraph(edges=E, edgeCosts=C, resources=[("E", T, "G", r)])
+    resource = {"E": [T], "G": [r]}, "time"
+    resourceRule = "Capacity", ["load"]
+    rules = [resourceRule]    
+    graph = model.addGraph(edges=E, edgeCosts=C, resources=[resource])
     subproblems.append(
-        model.addSubproblem(graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C")
+        model.addSubproblem(graph, source=o, target=d, obj=0, lb=0, ub=b, domain="C", rules=rules)
     )
 
 # create penalty variables

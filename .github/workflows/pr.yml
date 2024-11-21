@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: [3.12]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -71,3 +71,63 @@ jobs:
         cat log
         export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
         [ "$OBJECTIVE_VALUE" = "Cost 481982340.0" ]
+    - name: Test mcf2 (Linux)
+      run: |
+        python v2/mcf/mcf2.py > log
+        cat log
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 481982340.0" ]
+
+  test-fcmcf:
+    runs-on: ${{ matrix.os }}
+    needs: lint
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version: [ 3.12, 3.9, '3.10', 3.11 ]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install flowty
+    - name: Test fcmcf (Linux)
+      run: |
+        python v2/fcmcf/fcmcf.py > log
+        cat log
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 423848" ]    
+
+  test-rcmcf:
+    runs-on: ${{ matrix.os }}
+    needs: lint
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version: [ 3.12, 3.9, '3.10', 3.11 ]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install flowty
+    - name: Test rcmcf (Linux)
+      run: |
+        python v2/rcmcf/rcmcf.py > log
+        cat log
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 423848" ]
+    - name: Test rcmcf2 (Linux)
+      run: |
+        python v2/rcmcf/rcmcf2.py > log
+        cat log
+        export OBJECTIVE_VALUE=$(cat log | grep "Cost ")
+        [ "$OBJECTIVE_VALUE" = "Cost 423848" ]  
